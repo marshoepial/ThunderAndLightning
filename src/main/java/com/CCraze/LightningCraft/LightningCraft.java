@@ -25,6 +25,8 @@ public class LightningCraft {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static final String MODID = "lightningcraft";
+
     public LightningCraft() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
