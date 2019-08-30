@@ -1,30 +1,21 @@
 package com.CCraze.LightningCraft;
 
 import com.CCraze.LightningCraft.blocks.ModBlocks;
-import com.CCraze.LightningCraft.blocks.blockTest;
+import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import com.CCraze.LightningCraft.setup.ClientProxy;
 import com.CCraze.LightningCraft.setup.IProxy;
 import com.CCraze.LightningCraft.setup.ServerProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("lightningcraft")
@@ -49,11 +40,11 @@ public class LightningCraft {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
-            event.getRegistry().register(new blockTest());
+            event.getRegistry().register(new creativeLightningAttractor());
         }
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(new BlockItem(ModBlocks.BLOCKTEST, new Item.Properties()).setRegistryName("blocktest"));
+            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties()).setRegistryName("creativelightningattractor"));
         }
     }
 }

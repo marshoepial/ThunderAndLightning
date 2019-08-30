@@ -47,6 +47,6 @@ Manipulate Lightning to your own will! Craft and cook items, generate electricit
 [[dependencies.LightningCraft]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.2]"
+    versionRange="[1.14.4]"
     ordering="NONE"
     side="BOTH"

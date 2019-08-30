@@ -1,7 +1,7 @@
 package com.CCraze.LightningCraft;
 
 import com.CCraze.LightningCraft.behavior.BlockSetter;
-import com.CCraze.LightningCraft.blocks.blockTest;
+import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -27,7 +27,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void blockPlace(BlockEvent.EntityPlaceEvent event){
         System.out.println("Entity" + event.getState().getBlock() + " placed at " + event.getPos());
-        if (event.getState().getBlock() instanceof blockTest) {
+        if (event.getState().getBlock() instanceof creativeLightningAttractor) {
             boolean isTop = true;
             BlockPos pos = event.getPos();
             for (int i = 1; i < 255 - event.getPos().getY(); i++) {
@@ -52,7 +52,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void blockBreak(BlockEvent.BreakEvent event){
-        if (event.getState().getBlock() instanceof blockTest){
+        if (event.getState().getBlock() instanceof creativeLightningAttractor){
             int brokenIndex = attractorPos.indexOf(event.getPos());
             if (brokenIndex != -1){
                 attractorPos.remove(brokenIndex);
