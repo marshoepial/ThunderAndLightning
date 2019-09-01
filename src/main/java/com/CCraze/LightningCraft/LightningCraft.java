@@ -2,12 +2,14 @@ package com.CCraze.LightningCraft;
 
 import com.CCraze.LightningCraft.blocks.ModBlocks;
 import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
+import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
 import com.CCraze.LightningCraft.setup.ClientProxy;
 import com.CCraze.LightningCraft.setup.IProxy;
 import com.CCraze.LightningCraft.setup.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -46,7 +48,13 @@ public class LightningCraft {
         }
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties()).setRegistryName("creativelightningattractor"));
+            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties())
+                    .setRegistryName("creativelightningattractor"));
+        }
+        @SubscribeEvent
+        public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event){
+            event.getRegistry().register(TileEntityType.Builder.create(lightningAttractorTile::new,
+                    ModBlocks.CREATIVELIGHTNINGATTRACTOR).build(null).setRegistryName("lightningattractortile"));
         }
     }
 }
