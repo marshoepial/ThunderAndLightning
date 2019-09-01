@@ -2,6 +2,8 @@ package com.CCraze.LightningCraft.behavior;
 
 import com.CCraze.LightningCraft.EventHandler;
 import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +34,19 @@ public class BlockSetter {
             }
         }
         return e.getPosition();
+    } public static void cleanFire (World world, BlockPos initialStrike, BlockPos attractorStrike){
+        BlockState fireState = Blocks.FIRE.getDefaultState();
+        BlockState airState = Blocks.AIR.getDefaultState();
+        BlockPos tempBlockPos;
+        if (world.getBlockState(attractorStrike) == fireState) world.setBlockState(attractorStrike, airState);
+        for (int i = -2; i < 3; i++){
+            for (int j = -2; j < 3; j++){
+                for (int k = -2; k < 3; k++){
+                    tempBlockPos = new BlockPos(initialStrike.getX()+i, initialStrike.getY()-j, initialStrike.getZ()-k);
+                    if (world.getBlockState(tempBlockPos) == fireState) world.setBlockState(tempBlockPos, airState);
+                }
+            }
+        }
     }
     private static double distanceCalc(int x1, int z1, int x2, int z2){
         return Math.sqrt(((x1-x2)*(x1-x2))+((z1-z2)*(z1-z2)));
