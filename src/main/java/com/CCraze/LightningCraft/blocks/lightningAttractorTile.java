@@ -11,7 +11,6 @@ import static com.CCraze.LightningCraft.blocks.ModBlocks.LIGHTNINGATTRACTOR_TILE
 public class lightningAttractorTile extends TileEntity {
     private int chanceStrike = 0; //chance of being struck by lightning, between 0 and 1
     public int maxDist = 0; //maximum distance the block can be from a source of lightning for it to be struck
-
     public lightningAttractorTile(){ //this is a necessary constructor, however it will only be used internally by Forge
         super(LIGHTNINGATTRACTOR_TILE);
     }

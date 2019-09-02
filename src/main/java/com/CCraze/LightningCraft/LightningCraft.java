@@ -1,5 +1,6 @@
 package com.CCraze.LightningCraft;
 
+import com.CCraze.LightningCraft.behavior.LightningRecipeParser;
 import com.CCraze.LightningCraft.blocks.ModBlocks;
 import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import com.CCraze.LightningCraft.blocks.lightningAttractorTile;

@@ -1,0 +1,10 @@
+[
+    {
+      "initial": "minecraft:coal",
+      "final": "minecraft:diamond"
+    },
+    {
+      "initial": "minecraft:coal_block",
+      "final": "minecraft:diamond_block"
+    }
+]

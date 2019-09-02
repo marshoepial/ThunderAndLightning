@@ -1,6 +1,7 @@
 package com.CCraze.LightningCraft;
 
 import com.CCraze.LightningCraft.behavior.BlockSetter;
+import com.CCraze.LightningCraft.behavior.LightningRecipeParser;
 import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,12 @@ import java.util.List;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
+    public static LightningRecipeParser recipeParser = new LightningRecipeParser();
 
+    @SubscribeEvent
+    public static void serverStartingEvent(FMLServerStartingEvent e){
+        e.getServer().getResourceManager().addReloadListener(recipeParser);
+    }
     @SubscribeEvent
     public static void worldLoad(WorldEvent.Load event){
         World world = event.getWorld().getWorld();
