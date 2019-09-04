@@ -1,10 +1,54 @@
 [
     {
-      "initial": "minecraft:coal",
-      "final": "minecraft:diamond"
+      "initial": "minecraft:redstone",
+      "final": "minecraft:glowstone_dust"
     },
     {
-      "initial": "minecraft:coal_block",
-      "final": "minecraft:diamond_block"
-    }
+      "initial": "minecraft:sand",
+      "final": "minecraft:glass"
+    },
+  {
+    "initial": "minecraft:water",
+    "final": "minecraft:obsidian"
+  },
+  {
+    "initial": "minecraft:cobblestone",
+    "final": "minecraft:clay"
+  },
+  {
+    "initial": "minecraft:bone_block",
+    "final": "minecraft:soul_sand"
+  },
+  {
+    "initial": "minecraft:stone",
+    "final": "minecraft:concrete"
+  },
+  {
+    "initial": "minecraft:fish",
+    "final": "minecraft:cooked_fish"
+  },
+  {
+    "initial": "minecraft:porkchop",
+    "final": "minecraft:cooked_porkchop"
+  },
+  {
+    "initial": "minecraft:beef",
+    "final": "minecraft:cooked_beef"
+  },
+  {
+    "initial": "minecraft:chicken",
+    "final": "minecraft:cooked_chicken"
+  },
+  {
+    "initial": "minecraft:rabbit",
+    "final": "minecraft:cooked_rabbit"
+  },
+  {
+    "initial": "minecraft:mutton",
+    "final": "minecraft:cooked_mutton"
+  },
+  {
+    "initial": "minecraft:rotten_flesh",
+    "final": "minecraft:cooked_chicken"
+  }
 ]
