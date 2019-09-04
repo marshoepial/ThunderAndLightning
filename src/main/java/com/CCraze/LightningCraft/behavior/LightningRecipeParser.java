@@ -3,13 +3,13 @@ package com.CCraze.LightningCraft.behavior;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,38 +23,52 @@ import java.util.concurrent.Executor;
 public class LightningRecipeParser implements IFutureReloadListener{
     public List<String> initialThings = new ArrayList<>();
     public List<String> finalThings = new ArrayList<>();
-    public Item swapItem(Item inItem){
-        return null;
-    }
 
     @Override
     public CompletableFuture<Void> reload(IStage iStage, IResourceManager iResourceManager, IProfiler iProfiler, IProfiler iProfiler1, Executor executor, Executor executor1) {
-        return CompletableFuture.runAsync(new Runnable() {
-            @Override
-            public void run() {
-                if (!initialThings.isEmpty() || !finalThings.isEmpty()){
-                    initialThings = new ArrayList<>();
-                    finalThings = new ArrayList<>();
-                }
-                ResourceLocation lightningRecipes = new ResourceLocation("lightningcraft",
-                        "lightning_recipes/recipes.json");
-                InputStream streamIn = null;
-                try {
-                    streamIn = iResourceManager.getResource(lightningRecipes).getInputStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                JsonParser jsonParser = new JsonParser();
-                JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamIn, StandardCharsets.UTF_8));
-                jsonArray.forEach(iterate -> {
-                    JsonObject currentObj = (JsonObject) iterate;
-                    String initial = currentObj.get("initial").getAsString();
-                    String Final = currentObj.get("final").getAsString();
-                    System.out.println("LightningRecipe generated: "+initial+" -> "+Final);
-                    initialThings.add(initial);
-                    finalThings.add(Final);
-                });
-            }
+        return CompletableFuture.runAsync(() -> {
+            loadRecipes(iResourceManager); //the method is separate because I want to call it outside of this completableFuture
         }, executor);
     }
+    public void loadRecipes(IResourceManager resourceManager){
+        if (!initialThings.isEmpty() || !finalThings.isEmpty()){ //reset lists if they aren't empty (a.k.a. they have already been loaded)
+            initialThings = new ArrayList<>();
+            finalThings = new ArrayList<>();
+        }
+        ResourceLocation lightningRecipes = new ResourceLocation("lightningcraft",
+                "lightning_recipes/recipes.json"); //points to json file
+        InputStream streamIn = null;
+        try {
+            streamIn = resourceManager.getResource(lightningRecipes).getInputStream(); //get an inputstream for the json
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        JsonParser jsonParser = new JsonParser(); //parse thru the json's inputstream using google's handy methods
+        JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamIn, StandardCharsets.UTF_8));
+        jsonArray.forEach(iterate -> { //iterate over each recipe
+            JsonObject currentObj = (JsonObject) iterate;
+            String initial = currentObj.get("initial").getAsString(); //initial block/item
+            String Final = currentObj.get("final").getAsString(); //final block/item
+            System.out.println("LightningRecipe generated: "+initial+" -> "+Final);
+            initialThings.add(initial); //add them to a list
+            finalThings.add(Final);
+        });
+    }
+    public Item swapItem (Item inItem){
+        String inString = inItem.getRegistryName().toString();
+        int index = initialThings.indexOf(inString);
+        System.out.println("Item detected as "+inString+", this is registered as recipe number "+index);
+        if (index != -1){
+            System.out.println("Returning "+new ResourceLocation(finalThings.get(index)).toString());
+            return ForgeRegistries.ITEMS.getValue(new ResourceLocation(finalThings.get(index)));
+        }
+        return inItem;
+    } public Block swapBlock (Block inBlock){
+        String inString = inBlock.getRegistryName().toString();
+        int index = initialThings.indexOf(inString);
+        System.out.println("Block detected as "+inString+", this is registered as recipe number "+index);
+        if (index != -1) return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(finalThings.get(index)));
+        return inBlock;
+    }
+
 }

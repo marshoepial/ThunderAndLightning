@@ -14,17 +14,17 @@ issueTrackerURL="https://www.google.com" #optional
 # The modid of the mod
 modId="lightningcraft" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="1.14.4-1.0.0.0" #mandatory
  # A display name for the mod
 displayName="LightningCraft" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://www.google.com" #optional
+# updateJSONURL="https://www.google.com" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://www.google.com" #optional
+# displayURL="https://www.google.com" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="logoFile.png" #optional
 # A text field displayed in the mod UI
-credits="McJty made a giant 1.14 tutorial when FML for the version is still in beta. He is a god amongst men" #optional
+credits="Minecraft Mod Devleopment discord, thanks so much guys" #optional
 # A text field displayed in the mod UI
 authors="Written by ComputerCraze" #optional
 # The description text for the mod (multi line!) (#mandatory)

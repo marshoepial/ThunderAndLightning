@@ -1,6 +1,5 @@
 package com.CCraze.LightningCraft;
 
-import com.CCraze.LightningCraft.behavior.LightningRecipeParser;
 import com.CCraze.LightningCraft.blocks.ModBlocks;
 import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
@@ -16,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +39,7 @@ public class LightningCraft {
     private void setup(final FMLCommonSetupEvent event) {
     }
 
+
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -47,15 +48,21 @@ public class LightningCraft {
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
             event.getRegistry().register(new creativeLightningAttractor());
         }
+
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties())
                     .setRegistryName("creativelightningattractor"));
         }
+
         @SubscribeEvent
-        public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event){
+        public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
             event.getRegistry().register(TileEntityType.Builder.create(lightningAttractorTile::new,
                     ModBlocks.CREATIVELIGHTNINGATTRACTOR).build(null).setRegistryName("lightningattractortile"));
         }
+
+
+
     }
 }
+
