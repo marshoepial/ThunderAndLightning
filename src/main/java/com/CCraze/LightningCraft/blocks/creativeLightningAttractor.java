@@ -9,9 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -39,10 +37,13 @@ public class creativeLightningAttractor extends Block {
 
     @Override
     public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
-        if (world.isRemote){
+        if (!world.isRemote && hand.equals(Hand.MAIN_HAND)){
+            System.out.println("lightningAttractorBlock activated on world "+world.toString() + "with hand "+hand.toString());
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof lightningAttractorTile){
+                System.out.println("On world "+world.toString()+" found lightning attractor tile, sending energy message");
                 player.sendMessage(new StringTextComponent("Current Energy: "+((lightningAttractorTile)te).getEnergy()));
+                return true;
             }
         }
         return super.onBlockActivated(state, world, pos, player, hand, result);

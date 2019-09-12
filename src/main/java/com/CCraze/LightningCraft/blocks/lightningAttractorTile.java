@@ -80,8 +80,11 @@ public class lightningAttractorTile extends TileEntity {
                     }
                 }
             }
+            System.out.println("Lazy optional is present? " + energy.isPresent());
             energy.ifPresent(e -> {
+                System.out.println("Current energy stored is "+e.getEnergyStored());
                 if (e.getEnergyStored() <= e.getMaxEnergyStored() - 40000){
+                    System.out.println("Adding energy");
                     ((AttractorEnergyStorage)e).setEnergy(40000);
                 }
             });
@@ -98,7 +101,12 @@ public class lightningAttractorTile extends TileEntity {
     }
     public int getEnergy(){
         AtomicInteger returnVal = new AtomicInteger();
-        energy.ifPresent(e -> returnVal.set(e.getEnergyStored()));
+        energy.ifPresent(e -> {
+            int energyStored = e.getEnergyStored();
+            System.out.println("Got energy stored value of "+energyStored);
+            returnVal.set(energyStored);
+        });
+        System.out.println("Returning energy val of "+returnVal.get());
         return returnVal.get();
     }
     @Override

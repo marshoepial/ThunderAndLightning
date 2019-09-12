@@ -22,7 +22,11 @@ public class AttractorEnergyStorage extends EnergyStorage implements INBTSeriali
         setEnergy(nbt.getInt("energy"));
     }
 
-    public void setEnergy (int energy) {this.energy = energy;}
+    public void setEnergy (int inEnergy) {
+        System.out.println("Setting energy value at "+inEnergy);
+        this.energy = inEnergy;
+        System.out.println("Energy set at "+this.energy);
+    }
 
 
 }
