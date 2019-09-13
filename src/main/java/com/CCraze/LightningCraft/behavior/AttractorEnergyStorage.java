@@ -6,6 +6,8 @@ import net.minecraftforge.energy.EnergyStorage;
 
 public class AttractorEnergyStorage extends EnergyStorage implements INBTSerializable<CompoundNBT>{
 
+    public final int dissipateTime = 4;
+
     public AttractorEnergyStorage(int capacity, int transfer) {
         super(capacity, transfer);
     }
@@ -26,6 +28,13 @@ public class AttractorEnergyStorage extends EnergyStorage implements INBTSeriali
         System.out.println("Setting energy value at "+inEnergy);
         this.energy = inEnergy;
         System.out.println("Energy set at "+this.energy);
+    }
+    public void dissipateEnergy(){
+        int energyToRelease = capacity/(dissipateTime*20);
+        energy = energy - energyToRelease;
+    }
+    public void removeEnergy(int energyToRemove){
+        energy = energy - energyToRemove;
     }
 
 

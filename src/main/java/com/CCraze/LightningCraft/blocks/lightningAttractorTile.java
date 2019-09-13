@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -25,11 +26,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.CCraze.LightningCraft.blocks.ModBlocks.LIGHTNINGATTRACTOR_TILE;
 
-public class lightningAttractorTile extends TileEntity {
+public class lightningAttractorTile extends TileEntity implements ITickableTileEntity {
     private int chanceStrike = 0; //chance of being struck by lightning, between 0 and 1
     public int maxDist = 0; //maximum distance the block can be from a source of lightning for it to be struck
 
@@ -45,6 +47,18 @@ public class lightningAttractorTile extends TileEntity {
         maxDist = maximumDistance;
         this.markDirty(); //sets flag for NBT to be written. This is the only time it should be marked dirty
         System.out.println("Tile registered!");
+    }
+
+    @Override
+    public void tick() {
+        if (world.isRemote) return;
+        energy.ifPresent(e -> {
+            if (e.getEnergyStored() > 0){
+                if (!sendOutPower()){
+                    ((AttractorEnergyStorage)e).dissipateEnergy();
+                }
+            }
+        });
     }
 
     public boolean isValid(){
@@ -94,6 +108,32 @@ public class lightningAttractorTile extends TileEntity {
             return true;
         }
         return false;
+    } private boolean sendOutPower() {
+        AtomicBoolean sentPower = new AtomicBoolean(false);
+        energy.ifPresent(e -> {
+            AtomicInteger totalEnergy = new AtomicInteger(e.getEnergyStored());
+            if (totalEnergy.get() > 0){
+                for (Direction direction : Direction.values()){
+                    TileEntity te = world.getTileEntity(pos.offset(direction));
+                    if (te != null){
+                        boolean dontExit = te.getCapability(CapabilityEnergy.ENERGY, direction).map(h -> {
+                            if (h.canReceive()){
+                                int sentEnergy = h.receiveEnergy(Math.min(totalEnergy.get(), 40000), false);
+                                totalEnergy.addAndGet(-sentEnergy);
+                                ((AttractorEnergyStorage) e).removeEnergy(sentEnergy);
+                                sentPower.set(true);
+                                markDirty();
+                                return totalEnergy.get() > 0;
+                            } else {
+                                return true;
+                            }
+                        }).orElse(true);
+                        if (!dontExit) return;
+                    }
+                }
+            }
+        });
+        return sentPower.get();
     } private IEnergyStorage genEnergy(){
         return new AttractorEnergyStorage(40000, 40000);
     } private IItemHandler createHandler(){
@@ -139,4 +179,6 @@ public class lightningAttractorTile extends TileEntity {
         }
         return super.getCapability(cap, side);
     }
+
+
 }
