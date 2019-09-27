@@ -9,6 +9,7 @@ import com.CCraze.LightningCraft.setup.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,7 +52,7 @@ public class LightningCraft {
 
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties())
+            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties().group(ItemGroup.MISC))
                     .setRegistryName("creativelightningattractor"));
         }
 

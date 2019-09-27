@@ -62,7 +62,7 @@ public class ForgeEventHandler {
                     }
                     return true;
                 }
-            }, "field_217428_a"); //globalEntities obfuscated name
+            }, "field_217497_w"); //globalEntities obfuscated name
         }
     }
 }

@@ -4,6 +4,7 @@ import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,7 +23,7 @@ public class BlockSetter {
                     if (distanceCalc(xpos, zpos, currentAttractor.getPos().getX(), currentAttractor.getPos().getZ()) <
                             currentAttractor.maxDist) {
                         System.out.println("Lightning Strikes!");
-                        currentAttractor.thunderStruck();
+                        currentAttractor.thunderStruck((LightningBoltEntity)e);
                         return new BlockPos(currentAttractor.getPos().getX(), currentAttractor.getYWithOffset(),
                                 currentAttractor.getPos().getZ());
                     }

@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
@@ -74,26 +75,34 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
         if (world.getBlockState(getPos().up()) == Blocks.AIR.getDefaultState()) return 1+getPos().getY();
         else return 2+getPos().getY();
     }
-    public boolean thunderStruck(){
-        List<Entity> entityList = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(getPos().up()));
-        if(world.getBlockState(getPos().up()) == Blocks.AIR.getDefaultState()){
-            System.out.println("No blocks above attractor, iterating over "+entityList.size()+" entities checking for item");
-            for (Entity entity : entityList) {
-                if (entity instanceof ItemEntity) {
-                    System.out.println("Item found, replacing...");
-                    Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
-                    if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
-                        if (((ItemEntity) entity).getItem().getCount() > 1) {
-                            ItemEntity secondEntity = new ItemEntity(world, entity.posX, entity.posY, entity.posZ,
-                                    ((ItemEntity) entity).getItem().copy());
-                            secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-1);
-                            world.addEntity(secondEntity);
-                        }
-                        ((ItemEntity) entity).setItem(newItem.getDefaultInstance());
-                        return true;
+    public boolean thunderStruck(LightningBoltEntity lightning){
+        List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(getPos().up()));
+        System.out.println("Iterating over "+entityList.size()+" entities over attractor");
+        for (Entity entity : entityList) {
+            if (entity instanceof ItemEntity) {
+                System.out.println("Item found, replacing...");
+                Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
+                if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
+                    if (((ItemEntity) entity).getItem().getCount() > 1) {
+                        ItemEntity secondEntity = new ItemEntity(world, entity.posX, entity.posY, entity.posZ,
+                                ((ItemEntity) entity).getItem().copy());
+                        secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-1);
+                        world.addEntity(secondEntity);
                     }
+                    ((ItemEntity) entity).setItem(newItem.getDefaultInstance());
+                    return true;
                 }
+            } else {
+                entity.onStruckByLightning(lightning);
             }
+        }
+        if(world.getBlockState(getPos().up()) != Blocks.AIR.getDefaultState()){
+            System.out.println("Block above attractor detected, replacing...");
+            world.setBlockState(getPos().up(), ForgeEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
+            return true;
+        } else {
+            System.out.println("No blocks above attractor, no items, giving energy");
+
             System.out.println("Lazy optional is present? " + energy.isPresent());
             energy.ifPresent(e -> {
                 System.out.println("Current energy stored is "+e.getEnergyStored());
@@ -102,10 +111,6 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
                     ((AttractorEnergyStorage)e).setEnergy(40000);
                 }
             });
-        } else {
-            System.out.println("Block above attractor detected, replacing...");
-            world.setBlockState(getPos().up(), ForgeEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
-            return true;
         }
         return false;
     } private boolean sendOutPower() {
