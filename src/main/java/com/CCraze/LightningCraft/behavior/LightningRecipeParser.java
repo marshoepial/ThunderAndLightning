@@ -22,7 +22,7 @@ import java.util.concurrent.Executor;
 
 public class LightningRecipeParser implements IFutureReloadListener{
     public List<String> initialThings = new ArrayList<>();
-    public List<String> finalThings = new ArrayList<>();
+    public List<Object[]> finalThings = new ArrayList<>();
 
     @Override
     public CompletableFuture<Void> reload(IStage iStage, IResourceManager iResourceManager, IProfiler iProfiler, IProfiler iProfiler1, Executor executor, Executor executor1) {
@@ -49,9 +49,10 @@ public class LightningRecipeParser implements IFutureReloadListener{
             JsonObject currentObj = (JsonObject) iterate;
             String initial = currentObj.get("initial").getAsString(); //initial block/item
             String Final = currentObj.get("final").getAsString(); //final block/item
+            int maxCreate = currentObj.get("maxRepeat").getAsInt();
             System.out.println("LightningRecipe generated: "+initial+" -> "+Final);
             initialThings.add(initial); //add them to a list
-            finalThings.add(Final);
+            finalThings.add(new Object[]{Final, maxCreate});
         });
     }
     public Item swapItem (Item inItem){
@@ -59,16 +60,26 @@ public class LightningRecipeParser implements IFutureReloadListener{
         int index = initialThings.indexOf(inString);
         System.out.println("Item detected as "+inString+", this is registered as recipe number "+index);
         if (index != -1){
-            System.out.println("Returning "+new ResourceLocation(finalThings.get(index)).toString());
-            return ForgeRegistries.ITEMS.getValue(new ResourceLocation(finalThings.get(index)));
+            System.out.println("Returning "+new ResourceLocation((String)finalThings.get(index)[0]).toString());
+            return ForgeRegistries.ITEMS.getValue(new ResourceLocation((String)finalThings.get(index)[0]));
         }
         return inItem;
     } public Block swapBlock (Block inBlock){
         String inString = inBlock.getRegistryName().toString();
         int index = initialThings.indexOf(inString);
         System.out.println("Block detected as "+inString+", this is registered as recipe number "+index);
-        if (index != -1) return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(finalThings.get(index)));
+        if (index != -1) return ForgeRegistries.BLOCKS.getValue(new ResourceLocation((String)finalThings.get(index)[0]));
         return inBlock;
+    } public int getMaxRepeat (Item inItem){
+        String inString = inItem.getRegistryName().toString();
+        int index = initialThings.indexOf(inString);
+        if (index != -1) return (int)finalThings.get(index)[1];
+        return -1;
+    } public int getMaxRepeat (Block inBlock){
+        String inString = inBlock.getRegistryName().toString();
+        int index = initialThings.indexOf(inString);
+        if (index != -1) return (int)finalThings.get(index)[1];
+        return -1;
     }
 
 }

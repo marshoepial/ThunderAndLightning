@@ -1,54 +1,72 @@
 [
     {
       "initial": "minecraft:redstone",
-      "final": "minecraft:glowstone_dust"
+      "final": "minecraft:glowstone_dust",
+      "maxRepeat": 16
     },
     {
       "initial": "minecraft:sand",
-      "final": "minecraft:glass"
+      "final": "minecraft:glass",
+      "maxRepeat": 64
     },
   {
     "initial": "minecraft:water",
-    "final": "minecraft:obsidian"
+    "final": "minecraft:obsidian",
+    "maxRepeat": 1
   },
   {
     "initial": "minecraft:cobblestone",
-    "final": "minecraft:clay"
+    "final": "minecraft:clay",
+    "maxRepeat": 16
   },
   {
     "initial": "minecraft:bone_block",
-    "final": "minecraft:soul_sand"
+    "final": "minecraft:soul_sand",
+    "maxRepeat": 8
   },
   {
     "initial": "minecraft:stone",
-    "final": "minecraft:concrete"
+    "final": "minecraft:concrete",
+    "maxRepeat": 32
+  },
+  {
+    "initial": "minecraft:coal",
+    "final": "minecraft:blaze_powder",
+    "maxRepeat": 4
   },
   {
     "initial": "minecraft:fish",
-    "final": "minecraft:cooked_fish"
+    "final": "minecraft:cooked_fish",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:porkchop",
-    "final": "minecraft:cooked_porkchop"
+    "final": "minecraft:cooked_porkchop",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:beef",
-    "final": "minecraft:cooked_beef"
+    "final": "minecraft:cooked_beef",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:chicken",
-    "final": "minecraft:cooked_chicken"
+    "final": "minecraft:cooked_chicken",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:rabbit",
-    "final": "minecraft:cooked_rabbit"
+    "final": "minecraft:cooked_rabbit",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:mutton",
-    "final": "minecraft:cooked_mutton"
+    "final": "minecraft:cooked_mutton",
+    "maxRepeat": 64
   },
   {
     "initial": "minecraft:rotten_flesh",
-    "final": "minecraft:cooked_chicken"
+    "final": "minecraft:cooked_chicken",
+    "maxRepeat": 16
   }
 ]

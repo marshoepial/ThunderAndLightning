@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -82,14 +83,17 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
             if (entity instanceof ItemEntity) {
                 System.out.println("Item found, replacing...");
                 Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
+                int maxRepeat = ForgeEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
-                    if (((ItemEntity) entity).getItem().getCount() > 1) {
+                    if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
                         ItemEntity secondEntity = new ItemEntity(world, entity.posX, entity.posY, entity.posZ,
                                 ((ItemEntity) entity).getItem().copy());
-                        secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-1);
+                        secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
                         world.addEntity(secondEntity);
                     }
-                    ((ItemEntity) entity).setItem(newItem.getDefaultInstance());
+                    ItemStack returnStack = newItem.getDefaultInstance();
+                    returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
+                    ((ItemEntity) entity).setItem(returnStack);
                     return true;
                 }
             } else {
@@ -122,7 +126,7 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
                     TileEntity te = world.getTileEntity(pos.offset(direction));
                     if (te != null){
                         boolean dontExit = te.getCapability(CapabilityEnergy.ENERGY, direction).map(h -> {
-                            if (h.canReceive()){
+                            if (h.canReceive() && h.getEnergyStored() != h.getMaxEnergyStored()){
                                 int sentEnergy = h.receiveEnergy(Math.min(totalEnergy.get(), 40000), false);
                                 totalEnergy.addAndGet(-sentEnergy);
                                 ((AttractorEnergyStorage) e).removeEnergy(sentEnergy);
