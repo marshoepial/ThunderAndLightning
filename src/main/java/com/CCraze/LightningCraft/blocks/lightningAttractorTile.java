@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
@@ -47,7 +48,7 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
         super(LIGHTNINGATTRACTOR_TILE);
         chanceStrike = chanceOfBeingStruck;
         maxDist = maximumDistance;
-        this.markDirty(); //sets flag for NBT to be written. This is the only time it should be marked dirty
+        this.markDirty();
         System.out.println("Tile registered!");
     }
 
@@ -65,10 +66,8 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
 
     public boolean isValid(){
         if (Math.random() > chanceStrike) return false; //makes sure the chance of lightning striking is adhered to
-        for (int i = this.getPos().getY()+1; i < 255; i++){ //iterate over the blocks above the attractor to see if the attractor is blocked
-            BlockState currentState = this.getWorld().getBlockState(new BlockPos(this.getPos().getX(), i, this.getPos().getY()));
-            if (currentState.getMaterial() != Material.AIR) return false; //if block is not AIR, then attractor is blocked and not valid
-        }
+        for (int i = this.getPos().getY()+2; i < 255; i++) //iterate over the blocks above the attractor to see if the attractor is blocked
+            if (!getWorld().isAirBlock(new BlockPos(getPos().getX(), i, getPos().getZ()))) return false; //if block is not AIR, then attractor is blocked and not valid
         System.out.println("Is valid");
         return true;
     }
@@ -84,16 +83,20 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
                 System.out.println("Item found, replacing...");
                 Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
                 int maxRepeat = ForgeEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
+                System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
                         ItemEntity secondEntity = new ItemEntity(world, entity.posX, entity.posY, entity.posZ,
                                 ((ItemEntity) entity).getItem().copy());
                         secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
+                        System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
                         world.addEntity(secondEntity);
                     }
                     ItemStack returnStack = newItem.getDefaultInstance();
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
+                    System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     ((ItemEntity) entity).setItem(returnStack);
+                    System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
                     return true;
                 }
             } else {

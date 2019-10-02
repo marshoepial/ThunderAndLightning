@@ -25,11 +25,6 @@
     "maxRepeat": 8
   },
   {
-    "initial": "minecraft:stone",
-    "final": "minecraft:concrete",
-    "maxRepeat": 32
-  },
-  {
     "initial": "minecraft:coal",
     "final": "minecraft:blaze_powder",
     "maxRepeat": 4

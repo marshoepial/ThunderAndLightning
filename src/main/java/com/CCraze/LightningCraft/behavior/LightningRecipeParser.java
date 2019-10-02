@@ -1,10 +1,13 @@
 package com.CCraze.LightningCraft.behavior;
 
+import com.CCraze.LightningCraft.recipes.LightningAttractorRecipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
@@ -21,8 +24,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class LightningRecipeParser implements IFutureReloadListener{
-    public List<String> initialThings = new ArrayList<>();
-    public List<Object[]> finalThings = new ArrayList<>();
+
+    private List<LightningAttractorRecipe> recipeList = new ArrayList<>();
+    private IResourceManager resourceManager;
 
     @Override
     public CompletableFuture<Void> reload(IStage iStage, IResourceManager iResourceManager, IProfiler iProfiler, IProfiler iProfiler1, Executor executor, Executor executor1) {
@@ -30,10 +34,10 @@ public class LightningRecipeParser implements IFutureReloadListener{
             loadRecipes(iResourceManager); //the method is separate because I want to call it outside of this completableFuture
         }, executor);
     }
-    public void loadRecipes(IResourceManager resourceManager){
-        if (!initialThings.isEmpty() || !finalThings.isEmpty()){ //reset lists if they aren't empty (a.k.a. they have already been loaded)
-            initialThings = new ArrayList<>();
-            finalThings = new ArrayList<>();
+    public void loadRecipes(IResourceManager ResourceManager){
+        resourceManager = ResourceManager;
+        if (!recipeList.isEmpty()) { //reset lists if they aren't empty (a.k.a. they have already been loaded)
+            recipeList = new ArrayList<>();
         }
         ResourceLocation lightningRecipes = new ResourceLocation("lightningcraft",
                 "lightning_recipes/recipes.json"); //points to json file
@@ -47,39 +51,59 @@ public class LightningRecipeParser implements IFutureReloadListener{
         JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamIn, StandardCharsets.UTF_8));
         jsonArray.forEach(iterate -> { //iterate over each recipe
             JsonObject currentObj = (JsonObject) iterate;
-            String initial = currentObj.get("initial").getAsString(); //initial block/item
-            String Final = currentObj.get("final").getAsString(); //final block/item
+            ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
+            ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
             int maxCreate = currentObj.get("maxRepeat").getAsInt();
-            System.out.println("LightningRecipe generated: "+initial+" -> "+Final);
-            initialThings.add(initial); //add them to a list
-            finalThings.add(new Object[]{Final, maxCreate});
+            System.out.println("LightningRecipe generated: "+initial+" -> "+Final+" with max repeat of "+ maxCreate);
+            recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
         });
     }
+
     public Item swapItem (Item inItem){
-        String inString = inItem.getRegistryName().toString();
-        int index = initialThings.indexOf(inString);
-        System.out.println("Item detected as "+inString+", this is registered as recipe number "+index);
+        ItemStack inStack = inItem.getDefaultInstance();
+        int index = -1;
+        for (int i = 0; i < recipeList.size(); i++){
+            System.out.println("Comparing "+recipeList.get(i).getInputIngredient().getItem()+" and "+inStack.getItem());
+            if (recipeList.get(i).getInputIngredient().getItem().equals(inStack.getItem())){
+                index = i;
+                break;
+            }
+        }
+        System.out.println("Recipe detected as recipe number "+index);
         if (index != -1){
-            System.out.println("Returning "+new ResourceLocation((String)finalThings.get(index)[0]).toString());
-            return ForgeRegistries.ITEMS.getValue(new ResourceLocation((String)finalThings.get(index)[0]));
+            System.out.println("Replacing with "+recipeList.get(index).getOutputIngredient().getItem());
+            return recipeList.get(index).getOutputIngredient().getItem();
         }
         return inItem;
     } public Block swapBlock (Block inBlock){
-        String inString = inBlock.getRegistryName().toString();
-        int index = initialThings.indexOf(inString);
-        System.out.println("Block detected as "+inString+", this is registered as recipe number "+index);
-        if (index != -1) return ForgeRegistries.BLOCKS.getValue(new ResourceLocation((String)finalThings.get(index)[0]));
+        ItemStack inStack = inBlock.asItem().getDefaultInstance();
+        ItemStack outStack = inStack;
+        for (LightningAttractorRecipe lightningAttractorRecipe : recipeList) {
+            if (lightningAttractorRecipe.getInputIngredient().getItem().equals(inStack.getItem())) {
+                outStack = lightningAttractorRecipe.getOutputIngredient();
+                break;
+            }
+        }
+        if (outStack != inStack && outStack.getItem() instanceof BlockItem) return ((BlockItem) outStack.getItem()).getBlock();
         return inBlock;
     } public int getMaxRepeat (Item inItem){
-        String inString = inItem.getRegistryName().toString();
-        int index = initialThings.indexOf(inString);
-        if (index != -1) return (int)finalThings.get(index)[1];
-        return -1;
-    } public int getMaxRepeat (Block inBlock){
-        String inString = inBlock.getRegistryName().toString();
-        int index = initialThings.indexOf(inString);
-        if (index != -1) return (int)finalThings.get(index)[1];
-        return -1;
+        ItemStack inStack = inItem.getDefaultInstance();
+        int maxRepeat = -1;
+        for (LightningAttractorRecipe lightningAttractorRecipe : recipeList) {
+            if (lightningAttractorRecipe.getInputIngredient().getItem().equals(inStack.getItem())) {
+                maxRepeat = lightningAttractorRecipe.getMaxRepeat();
+                break;
+            }
+        }
+        return maxRepeat;
+    }
+
+    public List<LightningAttractorRecipe> getRecipeList(){
+        if (recipeList.isEmpty()){
+            if (resourceManager != null) loadRecipes(resourceManager);
+            else throw new NullPointerException("the ResourceManager for the Lightning Attractor Recipe Parser is empty, meaning jei integration is unavailable");
+        }
+        return recipeList;
     }
 
 }

@@ -22,6 +22,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 import java.util.ArrayList;
@@ -54,12 +55,12 @@ public class ForgeEventHandler {
                     if (e instanceof LightningBoltEntity) {
                         BlockPos pos = BlockSetter.setBlock(e);
                         new LightningBoltEntity(e.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), false);
-                        BlockSetter.cleanFire(e.getEntityWorld(), e.getPosition(), pos);
                         e.setPosition(pos.getX(), pos.getY(), pos.getZ());
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 10000.0F, 0.8F + e.world.rand.nextFloat() * 0.2F);
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + e.world.rand.nextFloat() * 0.2F);
+                        BlockSetter.cleanFire(e.getEntityWorld(), e.getPosition(), pos);
                         System.out.println("Lightning strike at "+e.getPosition());
-                    }
+                    } else super.add(e);
                     return true;
                 }
             }, "field_217497_w"); //globalEntities obfuscated name
