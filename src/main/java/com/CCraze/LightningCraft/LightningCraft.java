@@ -1,22 +1,25 @@
 package com.CCraze.LightningCraft;
 
-import com.CCraze.LightningCraft.blocks.ModBlocks;
-import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
-import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
+import com.CCraze.LightningCraft.blocks.*;
+import com.CCraze.LightningCraft.blocks.lightningattractors.CreativeLightningAttractor;
+import com.CCraze.LightningCraft.blocks.lightningattractors.DiamondLightningAttractor;
+import com.CCraze.LightningCraft.blocks.lightningattractors.IronLightningAttractor;
+import com.CCraze.LightningCraft.blocks.lightningattractors.WoolLightningAttractor;
+import com.CCraze.LightningCraft.items.ElectrumCoil;
+import com.CCraze.LightningCraft.items.LightningAttractorBlockItem;
+import com.CCraze.LightningCraft.items.TempestuousBlend;
 import com.CCraze.LightningCraft.setup.ClientProxy;
 import com.CCraze.LightningCraft.setup.IProxy;
+import com.CCraze.LightningCraft.setup.ModVals;
 import com.CCraze.LightningCraft.setup.ServerProxy;
 import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,19 +50,32 @@ public class LightningCraft {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
-            event.getRegistry().register(new creativeLightningAttractor());
+            event.getRegistry().register(new CreativeLightningAttractor());
+            event.getRegistry().register(new IronLightningAttractor());
+            event.getRegistry().register(new DiamondLightningAttractor());
+            event.getRegistry().register(new WoolLightningAttractor());
         }
 
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(new BlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties().group(ItemGroup.MISC))
+            event.getRegistry().register(new LightningAttractorBlockItem(ModBlocks.CREATIVELIGHTNINGATTRACTOR, new Item.Properties().group(ModVals.modGroup))
                     .setRegistryName("creativelightningattractor"));
+            event.getRegistry().register(new LightningAttractorBlockItem(ModBlocks.IRONLIGHTNINGATTRACTOR, new Item.Properties().group(ModVals.modGroup))
+                    .setRegistryName("ironlightningattractor"));
+            event.getRegistry().register(new LightningAttractorBlockItem(ModBlocks.DIAMONDLIGHTNINGATTRACTOR, new Item.Properties().group(ModVals.modGroup))
+                    .setRegistryName("diamondlightningattractor"));
+            event.getRegistry().register(new LightningAttractorBlockItem(ModBlocks.WOOLLIGHTNINGATTRACTOR, new Item.Properties().group(ModVals.modGroup))
+                    .setRegistryName("woollightningattractor"));
+            event.getRegistry().register(new TempestuousBlend());
+            event.getRegistry().register(new ElectrumCoil());
         }
 
         @SubscribeEvent
         public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
-            event.getRegistry().register(TileEntityType.Builder.create(lightningAttractorTile::new,
-                    ModBlocks.CREATIVELIGHTNINGATTRACTOR).build(null).setRegistryName("lightningattractortile"));
+            event.getRegistry().register(TileEntityType.Builder.create(LightningAttractorTile::new,
+                    ModBlocks.CREATIVELIGHTNINGATTRACTOR, ModBlocks.IRONLIGHTNINGATTRACTOR, ModBlocks.DIAMONDLIGHTNINGATTRACTOR,
+                    ModBlocks.WOOLLIGHTNINGATTRACTOR).build(null)
+                    .setRegistryName("lightningattractortile"));
         }
 
 

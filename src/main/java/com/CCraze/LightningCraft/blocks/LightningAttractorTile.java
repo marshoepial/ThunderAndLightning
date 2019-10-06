@@ -2,9 +2,7 @@ package com.CCraze.LightningCraft.blocks;
 
 import com.CCraze.LightningCraft.ForgeEventHandler;
 import com.CCraze.LightningCraft.behavior.AttractorEnergyStorage;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -14,7 +12,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,27 +31,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.CCraze.LightningCraft.blocks.ModBlocks.LIGHTNINGATTRACTOR_TILE;
 
-public class lightningAttractorTile extends TileEntity implements ITickableTileEntity {
-    private int chanceStrike = 0; //chance of being struck by lightning, between 0 and 1
+public class LightningAttractorTile extends TileEntity implements ITickableTileEntity {
+    private double chanceStrike = 0; //chance of being struck by lightning, between 0 and 1
     public int maxDist = 0; //maximum distance the block can be from a source of lightning for it to be struck
+    private int maxEnergyStorage;
+    private boolean canStoreEnergy;
 
     private LazyOptional<IItemHandler> handler = LazyOptional.of(this::createHandler);
     private LazyOptional<IEnergyStorage> energy = LazyOptional.of(this::genEnergy);
 
-    public lightningAttractorTile(){ //this is a necessary constructor, however it will only be used internally by Forge
+    public LightningAttractorTile(){ //this is a necessary constructor, however it will only be used internally by Forge
         super(LIGHTNINGATTRACTOR_TILE);
     }
-    public lightningAttractorTile(int chanceOfBeingStruck, int maximumDistance) { //this is the constructor we use, it has the variables we need
+    public LightningAttractorTile(double chanceOfBeingStruck, int maximumDistance, int maxStorage, boolean acceptsEnergy) { //this is the constructor we use, it has the variables we need
         super(LIGHTNINGATTRACTOR_TILE);
         chanceStrike = chanceOfBeingStruck;
         maxDist = maximumDistance;
+        maxEnergyStorage = maxStorage;
+        canStoreEnergy = acceptsEnergy;
         this.markDirty();
-        System.out.println("Tile registered!");
+        System.out.println("Tile registered with chance "+chanceStrike+", max dist "+maxDist+", energy capacity "+maxEnergyStorage+", and ability to store energy "+canStoreEnergy);
     }
 
     @Override
     public void tick() {
-        if (world.isRemote) return;
+        if (world.isRemote || !canStoreEnergy) return;
         energy.ifPresent(e -> {
             if (e.getEnergyStored() > 0){
                 if (!sendOutPower()){
@@ -75,11 +76,12 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
         if (world.getBlockState(getPos().up()) == Blocks.AIR.getDefaultState()) return 1+getPos().getY();
         else return 2+getPos().getY();
     }
-    public boolean thunderStruck(LightningBoltEntity lightning){
+    public void thunderStruck(LightningBoltEntity lightning){
         List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(getPos().up()));
         System.out.println("Iterating over "+entityList.size()+" entities over attractor");
+        boolean entityMod = false;
         for (Entity entity : entityList) {
-            if (entity instanceof ItemEntity) {
+            if (entity instanceof ItemEntity && !entityMod) {
                 System.out.println("Item found, replacing...");
                 Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
                 int maxRepeat = ForgeEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
@@ -97,30 +99,30 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
                     System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     ((ItemEntity) entity).setItem(returnStack);
                     System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
-                    return true;
+                    entityMod = true;
                 }
-            } else {
+            } else if (!(entity instanceof ItemEntity)) {
                 entity.onStruckByLightning(lightning);
             }
         }
         if(world.getBlockState(getPos().up()) != Blocks.AIR.getDefaultState()){
             System.out.println("Block above attractor detected, replacing...");
             world.setBlockState(getPos().up(), ForgeEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
-            return true;
-        } else {
+        } else if (canStoreEnergy) {
             System.out.println("No blocks above attractor, no items, giving energy");
 
             System.out.println("Lazy optional is present? " + energy.isPresent());
             energy.ifPresent(e -> {
                 System.out.println("Current energy stored is "+e.getEnergyStored());
-                if (e.getEnergyStored() <= e.getMaxEnergyStored() - 40000){
+                if (e.getEnergyStored() <= e.getMaxEnergyStored() - maxEnergyStorage){
                     System.out.println("Adding energy");
-                    ((AttractorEnergyStorage)e).setEnergy(40000);
+                    ((AttractorEnergyStorage)e).setEnergy(maxEnergyStorage);
                 }
             });
         }
-        return false;
+        if (getBlockState().getBlock() instanceof LightningAttractorBlock) ((LightningAttractorBlock) getBlockState().getBlock()).onStrike(getTileEntity().getWorld(), getTileEntity());
     } private boolean sendOutPower() {
+        if (!canStoreEnergy) return false;
         AtomicBoolean sentPower = new AtomicBoolean(false);
         energy.ifPresent(e -> {
             AtomicInteger totalEnergy = new AtomicInteger(e.getEnergyStored());
@@ -147,11 +149,12 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
         });
         return sentPower.get();
     } private IEnergyStorage genEnergy(){
-        return new AttractorEnergyStorage(40000, 40000);
+        return new AttractorEnergyStorage(maxEnergyStorage, maxEnergyStorage);
     } private IItemHandler createHandler(){
         return new ItemStackHandler();
     }
     public int getEnergy(){
+        if (!canStoreEnergy) return 0;
         AtomicInteger returnVal = new AtomicInteger();
         energy.ifPresent(e -> {
             int energyStored = e.getEnergyStored();
@@ -165,19 +168,25 @@ public class lightningAttractorTile extends TileEntity implements ITickableTileE
     public void read(CompoundNBT nbt){ //NBT is used for persistence across chunk load/unloads.
         super.read(nbt); //read NBT required by TileEntity class
         maxDist = nbt.getInt("maxDist");
-        chanceStrike = nbt.getInt("chanceStrike");
+        chanceStrike = nbt.getDouble("chanceStrike");
+        maxEnergyStorage = nbt.getInt("energyStorage");
+        canStoreEnergy = nbt.getBoolean("energyCap");
         CompoundNBT energyTag = nbt.getCompound("energy");
-        energy.ifPresent(h -> ((INBTSerializable<CompoundNBT>)h).deserializeNBT(energyTag));
+        if (canStoreEnergy) energy.ifPresent(h -> ((INBTSerializable<CompoundNBT>)h).deserializeNBT(energyTag));
     }
     @Override
     public CompoundNBT write(CompoundNBT nbt){
         super.write(nbt);
         nbt.putInt("maxDist", maxDist);
-        nbt.putInt("chanceStrike", chanceStrike);
-        energy.ifPresent(h -> {
-            CompoundNBT compoundNBT = ((INBTSerializable<CompoundNBT>)h).serializeNBT();
-            nbt.put("energy", compoundNBT);
-        });
+        nbt.putDouble("chanceStrike", chanceStrike);
+        nbt.putInt("energyStorage", maxEnergyStorage);
+        nbt.putBoolean("energyCap", canStoreEnergy);
+        if (canStoreEnergy) {
+            energy.ifPresent(h -> {
+                CompoundNBT compoundNBT = ((INBTSerializable<CompoundNBT>)h).serializeNBT();
+                nbt.put("energy", compoundNBT);
+            });
+        }
         return nbt;
     }
 

@@ -1,3 +1,9 @@
 {
-  "block.lightningcraft.creativelightningattractor": "Creative Lightning Attractor"
+  "item.lightningcraft.tempestuousblend": "Tempestuous Blend",
+  "item.lightningcraft.electrumcoil": "Electrum Coil",
+  "block.lightningcraft.creativelightningattractor": "Creative Lightning Attractor",
+  "block.lightningcraft.ironlightningattractor": "Iron Lightning Attractor",
+  "block.lightningcraft.diamondlightningattractor": "Diamond Lightning Attractor",
+  "block.lightningcraft.woollightningattractor": "Wool lightning Attractor",
+  "itemGroup.lightningcraft": "LightningCraft"
 }

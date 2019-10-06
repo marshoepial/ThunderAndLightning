@@ -1,7 +1,6 @@
 package com.CCraze.LightningCraft.jei;
 
 import com.CCraze.LightningCraft.blocks.ModBlocks;
-import com.CCraze.LightningCraft.blocks.creativeLightningAttractor;
 import com.CCraze.LightningCraft.recipes.LightningAttractorRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -31,7 +30,7 @@ public class LightningAttractorCategory implements IRecipeCategory<LightningAttr
         super();
         //original coords: 0, 17, 77, 54
         this.background = helper.createDrawable(guibg, 0, 17, 77, 54);
-        this.icon = helper.createDrawableIngredient(new ItemStack(ModBlocks.CREATIVELIGHTNINGATTRACTOR));
+        this.icon = helper.createDrawableIngredient(new ItemStack(ModBlocks.IRONLIGHTNINGATTRACTOR));
         this.arrow = helper.drawableBuilder(guibg, 54, 0, 22, 16).buildAnimated(100, IDrawableAnimated.StartDirection.LEFT, false);
         this.bolt = helper.drawableBuilder(guibg, 43, 0, 11, 16).buildAnimated(100, IDrawableAnimated.StartDirection.TOP, false);
     }
@@ -72,6 +71,7 @@ public class LightningAttractorCategory implements IRecipeCategory<LightningAttr
         IGuiItemStackGroup itemStackGroup = iRecipeLayout.getItemStacks();
         List<ItemStack> attractorList = new ArrayList<>();
         attractorList.add(new ItemStack(ModBlocks.CREATIVELIGHTNINGATTRACTOR));
+        attractorList.add(new ItemStack(ModBlocks.IRONLIGHTNINGATTRACTOR));
         itemStackGroup.init(0, true, 0, 18);
         itemStackGroup.set(0, lightningAttractorRecipe.getInputIngredient());
         itemStackGroup.init(1, false, 55, 18);

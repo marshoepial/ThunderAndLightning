@@ -6,10 +6,11 @@ import net.minecraftforge.energy.EnergyStorage;
 
 public class AttractorEnergyStorage extends EnergyStorage implements INBTSerializable<CompoundNBT>{
 
-    public final int dissipateTime = 4;
+    private final int dissipateTime = 4;
 
     public AttractorEnergyStorage(int capacity, int transfer) {
         super(capacity, transfer);
+        System.out.println("New energy storage generated with storage size "+capacity);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class AttractorEnergyStorage extends EnergyStorage implements INBTSeriali
     }
     public void dissipateEnergy(){
         int energyToRelease = capacity/(dissipateTime*20);
-        energy = energy - energyToRelease;
+        energy = Math.max(energy - energyToRelease, 0);
     }
     public void removeEnergy(int energyToRemove){
         energy = energy - energyToRemove;

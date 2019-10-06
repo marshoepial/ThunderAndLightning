@@ -1,6 +1,6 @@
 package com.CCraze.LightningCraft.behavior;
 
-import com.CCraze.LightningCraft.blocks.lightningAttractorTile;
+import com.CCraze.LightningCraft.blocks.LightningAttractorTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -20,11 +20,11 @@ public class BlockSetter {
 
         System.out.println("Iterating over "+w.loadedTileEntityList.size()+" TileEntities");
 
-        List<lightningAttractorTile> tileList = new ArrayList<>();
+        List<LightningAttractorTile> tileList = new ArrayList<>();
 
         for (int i = 0; i < w.loadedTileEntityList.size(); i++){ //iterate over all loaded tileentities
-            if (w.loadedTileEntityList.get(i) instanceof lightningAttractorTile){
-                lightningAttractorTile currentAttractor = (lightningAttractorTile) w.loadedTileEntityList.get(i);
+            if (w.loadedTileEntityList.get(i) instanceof LightningAttractorTile){
+                LightningAttractorTile currentAttractor = (LightningAttractorTile) w.loadedTileEntityList.get(i);
                 if (currentAttractor.isValid()) {
                     if (distanceCalc(xpos, zpos, currentAttractor.getPos().getX(), currentAttractor.getPos().getZ()) <
                             currentAttractor.maxDist) {
@@ -35,7 +35,7 @@ public class BlockSetter {
         }
         if (!tileList.isEmpty()){
             Random rand = new Random();
-            lightningAttractorTile randTile = tileList.get(rand.nextInt(tileList.size()));
+            LightningAttractorTile randTile = tileList.get(rand.nextInt(tileList.size()));
             randTile.thunderStruck((LightningBoltEntity) e);
             return new BlockPos(randTile.getPos().getX(), randTile.getYWithOffset(), randTile.getPos().getZ());
         }
