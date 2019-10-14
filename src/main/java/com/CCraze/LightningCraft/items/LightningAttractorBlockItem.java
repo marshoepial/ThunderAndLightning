@@ -25,7 +25,6 @@ public class LightningAttractorBlockItem extends BlockItem {
         super(blockIn, builder);
         abilityMod = 100;
     }
-
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if(this.isInGroup(group)){

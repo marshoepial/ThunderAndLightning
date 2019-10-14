@@ -2,6 +2,7 @@ package com.CCraze.LightningCraft.jei;
 
 import com.CCraze.LightningCraft.blocks.ModBlocks;
 import com.CCraze.LightningCraft.recipes.LightningAttractorRecipe;
+import com.CCraze.LightningCraft.setup.ModVals;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -69,15 +70,12 @@ public class LightningAttractorCategory implements IRecipeCategory<LightningAttr
     @Override
     public void setRecipe(IRecipeLayout iRecipeLayout, LightningAttractorRecipe lightningAttractorRecipe, IIngredients iIngredients) {
         IGuiItemStackGroup itemStackGroup = iRecipeLayout.getItemStacks();
-        List<ItemStack> attractorList = new ArrayList<>();
-        attractorList.add(new ItemStack(ModBlocks.CREATIVELIGHTNINGATTRACTOR));
-        attractorList.add(new ItemStack(ModBlocks.IRONLIGHTNINGATTRACTOR));
         itemStackGroup.init(0, true, 0, 18);
         itemStackGroup.set(0, lightningAttractorRecipe.getInputIngredient());
         itemStackGroup.init(1, false, 55, 18);
         itemStackGroup.set(1, lightningAttractorRecipe.getOutputIngredient());
-        itemStackGroup.init(2, false, 0, 38);
-        itemStackGroup.set(2, attractorList);
+        //itemStackGroup.init(2, false, 0, 38);
+        //itemStackGroup.set(2, ModVals.attractorList);
 
     }
 

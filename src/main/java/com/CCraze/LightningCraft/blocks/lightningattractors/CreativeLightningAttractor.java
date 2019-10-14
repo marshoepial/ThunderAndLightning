@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 
 public class CreativeLightningAttractor extends LightningAttractorBlock {
     public CreativeLightningAttractor() {
-        super(Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.0f), 1,
-                99999, 40000,true, "creativelightningattractor");
+        super(Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3.0f),
+                "Creative","creativelightningattractor");
     }
 }

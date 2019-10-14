@@ -1,9 +1,11 @@
 package com.CCraze.LightningCraft.behavior;
 
 import com.CCraze.LightningCraft.recipes.LightningAttractorRecipe;
+import com.CCraze.LightningCraft.setup.ModVals;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import jdk.nashorn.internal.parser.JSONParser;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -14,9 +16,8 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.annotation.Resource;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +42,25 @@ public class LightningRecipeParser implements IFutureReloadListener{
         }
         ResourceLocation lightningRecipes = new ResourceLocation("lightningcraft",
                 "lightning_recipes/recipes.json"); //points to json file
-        InputStream streamIn = null;
+        InputStream streamInInternal = null;
+        InputStream streamInExternal = null;
         try {
-            streamIn = resourceManager.getResource(lightningRecipes).getInputStream(); //get an inputstream for the json
+            streamInInternal = resourceManager.getResource(lightningRecipes).getInputStream(); //get an inputstream for the json
+            streamInExternal = new FileInputStream(ModVals.RECIPEFILE);
         } catch (IOException e) {
             e.printStackTrace();
         }
         JsonParser jsonParser = new JsonParser(); //parse thru the json's inputstream using google's handy methods
-        JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamIn, StandardCharsets.UTF_8));
+        JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInInternal, StandardCharsets.UTF_8));
+        jsonArray.forEach(iterate -> { //iterate over each recipe
+            JsonObject currentObj = (JsonObject) iterate;
+            ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
+            ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
+            int maxCreate = currentObj.get("maxRepeat").getAsInt();
+            System.out.println("LightningRecipe generated: "+initial+" -> "+Final+" with max repeat of "+ maxCreate);
+            recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
+        });
+        jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInExternal, StandardCharsets.UTF_8));
         jsonArray.forEach(iterate -> { //iterate over each recipe
             JsonObject currentObj = (JsonObject) iterate;
             ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
@@ -58,7 +70,6 @@ public class LightningRecipeParser implements IFutureReloadListener{
             recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
         });
     }
-
     public Item swapItem (Item inItem){
         ItemStack inStack = inItem.getDefaultInstance();
         int index = -1;

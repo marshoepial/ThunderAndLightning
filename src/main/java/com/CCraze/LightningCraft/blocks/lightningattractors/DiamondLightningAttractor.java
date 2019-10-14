@@ -7,7 +7,6 @@ import net.minecraft.block.material.Material;
 
 public class DiamondLightningAttractor extends LightningAttractorBlock {
     public DiamondLightningAttractor(){
-        super(Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2.5f),0.7,
-                600,40000, true,"diamondlightningattractor");
+        super(Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3.5f),"Diamond","diamondlightningattractor");
     }
 }
