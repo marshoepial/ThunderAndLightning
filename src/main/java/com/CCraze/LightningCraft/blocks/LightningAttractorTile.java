@@ -155,6 +155,9 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         return new ItemStackHandler();
     }
     public double getModifier() {return modifier;}
+    public boolean canStoreEnergy() {
+        return canStoreEnergy;
+    }
     public void setModifier(double modifier) {
         this.modifier = modifier;
         markDirty();

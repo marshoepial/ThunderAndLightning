@@ -56,7 +56,7 @@ public class LightningCraftConfig {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } if(RECIPEFILE.length() != 0) recipeFileInUse = true;
+        }
     } public void writeToConfig(ConfigGroup group) {
         try{
             FileWriter writer = new FileWriter(CONFIGFILE);

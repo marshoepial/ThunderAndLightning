@@ -61,12 +61,11 @@ public class LightningAttractorBlock extends Block{
                 (int)Math.round(maxEnergyStorage*modifier), energyCap);
     }
 
-    @Override
     public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
-        if (!world.isRemote && hand.equals(Hand.MAIN_HAND) && energyCap){
+        if (!world.isRemote && hand.equals(Hand.MAIN_HAND)){
             System.out.println("lightningAttractorBlock activated on world "+world.toString() + "with hand "+hand.toString());
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof LightningAttractorTile){
+            if (te instanceof LightningAttractorTile && ((LightningAttractorTile) te).canStoreEnergy()){
                 System.out.println("On world "+world.toString()+" found lightning attractor tile, sending energy message");
                 player.sendMessage(new StringTextComponent("Current Energy: "+((LightningAttractorTile)te).getEnergy()));
                 return true;

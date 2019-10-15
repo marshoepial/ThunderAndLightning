@@ -47,11 +47,12 @@ public class ForgeEventHandler {
                 public boolean add(Entity e){
                     if (e instanceof LightningBoltEntity) {
                         BlockPos pos = BlockSetter.setBlock(e);
+                        BlockPos initialStrikePos = e.getPosition();
                         new LightningBoltEntity(e.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), false);
                         e.setPosition(pos.getX(), pos.getY(), pos.getZ());
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 10000.0F, 0.8F + e.world.rand.nextFloat() * 0.2F);
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + e.world.rand.nextFloat() * 0.2F);
-                        BlockSetter.cleanFire(e.getEntityWorld(), e.getPosition(), pos);
+                        BlockSetter.cleanFire(e.getEntityWorld(), initialStrikePos, pos);
                         System.out.println("Lightning strike at "+e.getPosition());
                     } else super.add(e);
                     return true;

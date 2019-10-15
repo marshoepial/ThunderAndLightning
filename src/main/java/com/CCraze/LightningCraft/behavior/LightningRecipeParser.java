@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import static com.CCraze.LightningCraft.setup.ModVals.RECIPEFILE;
+
 public class LightningRecipeParser implements IFutureReloadListener{
 
     private List<LightningAttractorRecipe> recipeList = new ArrayList<>();
@@ -51,16 +53,24 @@ public class LightningRecipeParser implements IFutureReloadListener{
             e.printStackTrace();
         }
         JsonParser jsonParser = new JsonParser(); //parse thru the json's inputstream using google's handy methods
-        JsonArray jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInInternal, StandardCharsets.UTF_8));
-        jsonArray.forEach(iterate -> { //iterate over each recipe
-            JsonObject currentObj = (JsonObject) iterate;
-            ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
-            ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
-            int maxCreate = currentObj.get("maxRepeat").getAsInt();
-            System.out.println("LightningRecipe generated: "+initial+" -> "+Final+" with max repeat of "+ maxCreate);
-            recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
-        });
-        jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInExternal, StandardCharsets.UTF_8));
+        JsonArray jsonArray;
+        if (RECIPEFILE.length() != 0) {
+            try {
+                jsonArray = (JsonArray) jsonParser.parse(new InputStreamReader(streamInExternal, StandardCharsets.UTF_8));
+                jsonArray.forEach(iterate -> { //iterate over each recipe
+                    JsonObject currentObj = (JsonObject) iterate;
+                    ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
+                    ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
+                    int maxCreate = currentObj.get("maxRepeat").getAsInt();
+                    System.out.println("LightningRecipe generated: " + initial + " -> " + Final + " with max repeat of " + maxCreate);
+                    recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
+                });
+            } catch (Exception e){
+                System.out.println("Error loading external recipe file. Are you sure you wrote it correctly?");
+                System.out.println(e);
+            }
+        }
+        jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInInternal, StandardCharsets.UTF_8));
         jsonArray.forEach(iterate -> { //iterate over each recipe
             JsonObject currentObj = (JsonObject) iterate;
             ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item

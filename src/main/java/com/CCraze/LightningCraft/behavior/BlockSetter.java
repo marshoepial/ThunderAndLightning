@@ -48,8 +48,13 @@ public class BlockSetter {
         for (int i = -2; i < 3; i++){
             for (int j = -2; j < 3; j++){
                 for (int k = -2; k < 3; k++){
-                    tempBlockPos = new BlockPos(initialStrike.getX()+i, initialStrike.getY()-j, initialStrike.getZ()-k);
-                    if (world.getBlockState(tempBlockPos) == fireState) world.setBlockState(tempBlockPos, airState);
+                    System.out.println("Checking if "+initialStrike.getX()+i+", "+initialStrike.getY()+j + ", "+ initialStrike.getZ()+k+" contains fire");
+                    tempBlockPos = new BlockPos(initialStrike.getX()+i, initialStrike.getY()+j, initialStrike.getZ()+k);
+                    if (world.getBlockState(tempBlockPos).equals(fireState)){
+                        System.out.println("Fire detected; replacing");
+                        world.setBlockState(tempBlockPos, airState);
+                        System.out.println("Block replaced at "+tempBlockPos+", it is now "+world.getBlockState(tempBlockPos));
+                    }
                 }
             }
         }

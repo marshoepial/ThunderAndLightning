@@ -23,7 +23,6 @@ public class ModVals {
 
     public static final File CONFIGFILE = new File("config/"+LightningCraft.MODID+"/"+LightningCraft.MODID+".cfg");
     public static final File RECIPEFILE = new File("config/"+LightningCraft.MODID+"/recipes.json");
-    public static boolean recipeFileInUse = false;
     public static LightningCraftConfig lightningCraftConfig = LightningCraft.CONFIG;
 
     public ModVals(){
