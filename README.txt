@@ -1,53 +1,46 @@
--------------------------------------------
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+    __    _       __    __        _             ______           ______ 
+   / /   (_)___ _/ /_  / /_____  (_)___  ____ _/ ____/________ _/ __/ /_
+  / /   / / __ `/ __ \/ __/ __ \/ / __ \/ __ `/ /   / ___/ __ `/ /_/ __/
+ / /___/ / /_/ / / / / /_/ / / / / / / / /_/ / /___/ /  / /_/ / __/ /_  
+/_____/_/\__, /_/ /_/\__/_/ /_/_/_/ /_/\__, /\____/_/   \__,_/_/  \__/  
+        /____/                        /____/                            
 
-Note also that the patches are built against "unrenamed" MCP source code (aka
-srgnames) - this means that you will not be able to read them directly against
-normal code.
+                              LightningCraft
+                       ~~A Mod For Minecraft 1.14.4~~
 
-Source pack installation information:
+Features:
+   -Lightning Attractor Blocks - Attract lightning!
+         =Power generation and crafting
+         =Different tiers with seperate modifiers - plenty of progression!
+   -Jei Integration - know what you can make and how!
+   -Many config options - modify the mod to fit your pack!
+Todo:
+   -Storm Furnace - create thunderstorms at your own will!
+   -Lightning Wand - Attack others with the power of storms!
+   
+The Basics:
+   -Getting Lightning to Strike your Attractor
+      =The chance of your lightning attractor block being struck is based on its tier and its modifier.
+         +Tiers: Creative = 100%, Iron = 50%, Diamond = 70%, Wool = 50%
+      =Modifiers are set by how you craft the Tempestuous Blend, and modify the tier-set chance value.
+         +Blend Modifiers: With Glowstone = 100%, Without Glowstone = 50%, All Dyes = 25%
+         +E.G. If you crafted an Iron Lightning Attractor with a Tempestuous Blend with a 50% modifier, its lightning strike chance will be 25%.
+   -Lightning Attractor Transformation
+      =Place the blocks or items you want to change on top of a lightning attractor block. When lightning strikes it, the blocks or items will transform into the other items specified by the base or added recipes.
+      =If the recipe has a "Max Stack" option, only that number of items will be transformed on a lightning strike. Any extra items will be knocked off the attractor.
+   -Lightning Attractor Power
+      =If no items are present on top of the attractor, the attractor will instead internalize the power of the strike as Forge Energy (FE).
+      =Depending on which tier attractor and tier Tempestuous Blend you use, different amounts of energy will be internalized.
+      =Over a short period of time, if the energy is not used, it will dissipate into the air.
 
-Standalone source installation
-==============================
+Configs:
 
-See the Forge Documentation online for more detailed instructions:
-http://mcforge.readthedocs.io/en/latest/gettingstarted/
-
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
-
-Step 2: You're left with a choice.
-If you prefer to use Eclipse:
-1. Run the following command: "gradlew genEclipseRuns" (./gradlew genEclipseRuns if you are on Mac/Linux)
-2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
-   or run "gradlew eclipse" to generate the project.
-(Current Issue)
-4. Open Project > Run/Debug Settings > Edit runClient and runServer > Environment
-5. Edit MOD_CLASSES to show [modid]%%[Path]; 2 times rather then the generated 4.
-
-If you prefer to use IntelliJ:
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Run the following command: "gradlew genIntellijRuns" (./gradlew genIntellijRuns if you are on Mac/Linux)
-4. Refresh the Gradle Project in IDEA if required.
-
-If at any point you are missing libraries in your IDE, or you've run into problems you can run "gradlew --refresh-dependencies" to refresh the local cache. "gradlew clean" to reset everything {this does not affect your code} and then start the processs again.
-
-Should it still not work, 
-Refer to #ForgeGradle on EsperNet for more information about the gradle environment.
-or the Forge Project Discord discord.gg/UvedJ9m
-
-Forge source installation
-=========================
-MinecraftForge ships with this code and installs it as part of the forge
-installation process, no further action is required on your part.
-
-LexManos' Install Video
-=======================
-https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
-
-For more details update more often refer to the Forge Forums:
-http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
+There are two config files in this mod. The first, lightningcraft.conf, is used for modifying general values. Currently it is used for modifying the base values for each lightning attractor tier. The second, recipes.json, is used to modify the lightning attractor recipes. Its base structure is as such:
+[
+    {
+      "initial": "minecraft:redstone",
+      "final": "minecraft:glowstone_dust",
+      "maxRepeat": 16
+    }
+]
+where "initial" is contains the beginning item or block id, "final" contains the final item or block id, and "maxRepeat" is how many items that can be transformed. The initial item can be one that already exists in the base mod, and then the recipe would be overrided, and the final item can be "minecraft:air", meaning that the recipe would be removed.
