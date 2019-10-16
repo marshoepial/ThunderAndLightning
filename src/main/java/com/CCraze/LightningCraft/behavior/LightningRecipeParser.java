@@ -84,15 +84,15 @@ public class LightningRecipeParser implements IFutureReloadListener{
         ItemStack inStack = inItem.getDefaultInstance();
         int index = -1;
         for (int i = 0; i < recipeList.size(); i++){
-            System.out.println("Comparing "+recipeList.get(i).getInputIngredient().getItem()+" and "+inStack.getItem());
+            //System.out.println("Comparing "+recipeList.get(i).getInputIngredient().getItem()+" and "+inStack.getItem());
             if (recipeList.get(i).getInputIngredient().getItem().equals(inStack.getItem())){
                 index = i;
                 break;
             }
         }
-        System.out.println("Recipe detected as recipe number "+index);
+        //System.out.println("Recipe detected as recipe number "+index);
         if (index != -1){
-            System.out.println("Replacing with "+recipeList.get(index).getOutputIngredient().getItem());
+            //System.out.println("Replacing with "+recipeList.get(index).getOutputIngredient().getItem());
             return recipeList.get(index).getOutputIngredient().getItem();
         }
         return inItem;

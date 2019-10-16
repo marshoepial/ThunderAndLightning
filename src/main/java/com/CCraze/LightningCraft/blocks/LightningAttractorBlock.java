@@ -47,7 +47,7 @@ public class LightningAttractorBlock extends Block{
         this.energyCap = (boolean)LightningCraft.CONFIG.readFromConfig(configStr + " CanStoreEnergy");
         this.registryName = registryName;
         setRegistryName(registryName);
-        System.out.println("Attractor Block created with "+modifier+" modifier");
+        //System.out.println("Attractor Block created with "+modifier+" modifier");
     }
 
     @Override
@@ -56,17 +56,17 @@ public class LightningAttractorBlock extends Block{
     }
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world){
-        System.out.println("Creating new TileEntity");
+        //System.out.println("Creating new TileEntity");
         return new LightningAttractorTile(chanceToStrike*modifier, (int)Math.round(maxDist*modifier),
                 (int)Math.round(maxEnergyStorage*modifier), energyCap);
     }
 
     public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
         if (!world.isRemote && hand.equals(Hand.MAIN_HAND)){
-            System.out.println("lightningAttractorBlock activated on world "+world.toString() + "with hand "+hand.toString());
+            //System.out.println("lightningAttractorBlock activated on world "+world.toString() + "with hand "+hand.toString());
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof LightningAttractorTile && ((LightningAttractorTile) te).canStoreEnergy()){
-                System.out.println("On world "+world.toString()+" found lightning attractor tile, sending energy message");
+                //System.out.println("On world "+world.toString()+" found lightning attractor tile, sending energy message");
                 player.sendMessage(new StringTextComponent("Current Energy: "+((LightningAttractorTile)te).getEnergy()));
                 return true;
             }
@@ -78,14 +78,14 @@ public class LightningAttractorBlock extends Block{
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         CompoundNBT nbt = stack.getTag();
         if (stack.getItem() instanceof LightningAttractorBlockItem && nbt.contains("ability") && worldIn.getTileEntity(pos) instanceof LightningAttractorTile){
-            System.out.println("Attractor block placed by item with modifier "+nbt.getInt("ability")+", setting to "+worldIn.getTileEntity(pos));
+            //System.out.println("Attractor block placed by item with modifier "+nbt.getInt("ability")+", setting to "+worldIn.getTileEntity(pos));
             ((LightningAttractorTile) worldIn.getTileEntity(pos)).setModifier((double) nbt.getInt("ability") / 100);
         }
     }
 
     @Override
     public List<ItemStack> getDrops(BlockState bs, LootContext.Builder builder) {
-        System.out.println("TileEntity is "+builder.get(LootParameters.BLOCK_ENTITY));
+        //System.out.println("TileEntity is "+builder.get(LootParameters.BLOCK_ENTITY));
         if (builder.get(LootParameters.BLOCK_ENTITY) instanceof LightningAttractorTile) {
             List<ItemStack> drops = new ArrayList<>();
             ItemStack labi = ForgeRegistries.ITEMS.getValue(new ResourceLocation("lightningcraft:" + registryName)).getDefaultInstance();

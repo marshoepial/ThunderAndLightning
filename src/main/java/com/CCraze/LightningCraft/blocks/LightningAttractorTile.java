@@ -49,7 +49,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         maxEnergyStorage = maxStorage;
         canStoreEnergy = acceptsEnergy;
         this.markDirty();
-        System.out.println("Tile registered with chance "+chanceStrike+", max dist "+maxDist+", energy capacity "+maxEnergyStorage+", and ability to store energy "+canStoreEnergy);
+        //System.out.println("Tile registered with chance "+chanceStrike+", max dist "+maxDist+", energy capacity "+maxEnergyStorage+", and ability to store energy "+canStoreEnergy);
     }
     public LightningAttractorTile() {
         super(LIGHTNINGATTRACTOR_TILE);
@@ -71,7 +71,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         if (Math.random() > chanceStrike) return false; //makes sure the chance of lightning striking is adhered to
         for (int i = this.getPos().getY()+2; i < 255; i++) //iterate over the blocks above the attractor to see if the attractor is blocked
             if (!getWorld().isAirBlock(new BlockPos(getPos().getX(), i, getPos().getZ()))) return false; //if block is not AIR, then attractor is blocked and not valid
-        System.out.println("Is valid");
+        //System.out.println("Is valid");
         return true;
     }
     public int getYWithOffset(){
@@ -80,29 +80,29 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
     }
     public void thunderStruck(LightningBoltEntity lightning){
         List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(getPos().up()));
-        System.out.println("Iterating over "+entityList.size()+" entities over attractor");
+        //System.out.println("Iterating over "+entityList.size()+" entities over attractor");
         boolean entityMod = false;
         for (Entity entity : entityList) {
             if (entity instanceof ItemEntity && !entityMod) {
-                System.out.println("Item found, replacing...");
+                //System.out.println("Item found, replacing...");
                 Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
                 int maxRepeat = ForgeEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
-                System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
+                //System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
                         ItemEntity secondEntity = genItemEntity(world, entity.posX, entity.posY, entity.posZ,
                                 ((ItemEntity) entity).getItem().copy());
                         secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
-                        System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
+                        //System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
                         world.addEntity(secondEntity);
                     }
                     ItemStack returnStack = newItem.getDefaultInstance();
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
-                    System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
+                    //System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     entity.remove();
                     entity = genItemEntity(world, entity.posX, entity.posY, entity.posZ, returnStack);
                     world.addEntity(entity);
-                    System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
+                    //System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
                     entityMod = true;
                 }
             } else if (!(entity instanceof ItemEntity)) {
@@ -110,16 +110,16 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
             }
         }
         if(world.getBlockState(getPos().up()) != Blocks.AIR.getDefaultState()){
-            System.out.println("Block above attractor detected, replacing...");
+            //System.out.println("Block above attractor detected, replacing...");
             world.setBlockState(getPos().up(), ForgeEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
         } else if (canStoreEnergy) {
-            System.out.println("No blocks above attractor, no items, giving energy");
+            //System.out.println("No blocks above attractor, no items, giving energy");
 
-            System.out.println("Lazy optional is present? " + energy.isPresent());
+            //System.out.println("Lazy optional is present? " + energy.isPresent());
             energy.ifPresent(e -> {
-                System.out.println("Current energy stored is "+e.getEnergyStored());
+                //System.out.println("Current energy stored is "+e.getEnergyStored());
                 if (e.getEnergyStored() <= e.getMaxEnergyStored() - maxEnergyStorage){
-                    System.out.println("Adding energy");
+                    //System.out.println("Adding energy");
                     ((AttractorEnergyStorage)e).setEnergy(maxEnergyStorage);
                 }
             });
@@ -173,10 +173,10 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         AtomicInteger returnVal = new AtomicInteger();
         energy.ifPresent(e -> {
             int energyStored = e.getEnergyStored();
-            System.out.println("Got energy stored value of "+energyStored);
+            //System.out.println("Got energy stored value of "+energyStored);
             returnVal.set(energyStored);
         });
-        System.out.println("Returning energy val of "+returnVal.get());
+        //System.out.println("Returning energy val of "+returnVal.get());
         return returnVal.get();
     }
     @Override

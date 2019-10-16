@@ -121,7 +121,7 @@ public class LightningCraftConfig {
         private String name;
         public ConfigItem(String name, Object item){
             this.name = name;
-            System.out.println("Config option "+name+" parsed with class "+item.getClass());
+            //System.out.println("Config option "+name+" parsed with class "+item.getClass());
             StringBuilder sb = new StringBuilder(name);
             if (item instanceof Boolean)
                 itemType = "B:";
@@ -134,16 +134,16 @@ public class LightningCraftConfig {
             sb.insert(0, itemType).append("=").append(item);
             outputString = sb.toString();
         } public Object findItem(String currLine, String name){
-            System.out.println("Comparing "+name+" with "+this.name+" and line"+currLine);
+            //System.out.println("Comparing "+name+" with "+this.name+" and line"+currLine);
             if (currLine.contains(this.name) && currLine.contains(itemType) && this.name.equals(name)){
-                System.out.println("Matched!");
+                //System.out.println("Matched!");
                 final String substring = currLine.replaceAll(" {5}", "").substring(3 + name.length());
                 Object returningObj = null;
                 if (itemType.equals("B:")) returningObj = Boolean.parseBoolean(substring);
                 if (itemType.equals("I:")) returningObj = Integer.parseInt(substring);
                 if (itemType.equals("S:")) returningObj = substring;
                 if (itemType.equals("D:")) returningObj = Double.parseDouble(substring);
-                System.out.println("Returning "+returningObj);
+                //System.out.println("Returning "+returningObj);
                 return returningObj;
             }
             return null;

@@ -10,7 +10,7 @@ public class AttractorEnergyStorage extends EnergyStorage implements INBTSeriali
 
     public AttractorEnergyStorage(int capacity, int transfer) {
         super(capacity, transfer);
-        System.out.println("New energy storage generated with storage size "+capacity);
+        //System.out.println("New energy storage generated with storage size "+capacity);
     }
 
     @Override
@@ -26,9 +26,9 @@ public class AttractorEnergyStorage extends EnergyStorage implements INBTSeriali
     }
 
     public void setEnergy (int inEnergy) {
-        System.out.println("Setting energy value at "+inEnergy);
+        //System.out.println("Setting energy value at "+inEnergy);
         this.energy = inEnergy;
-        System.out.println("Energy set at "+this.energy);
+        //System.out.println("Energy set at "+this.energy);
     }
     public void dissipateEnergy(){
         int energyToRelease = capacity/(dissipateTime*20);

@@ -29,7 +29,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void serverStartingEvent(FMLServerStartingEvent event) {
         IResourceManager resourceManager = event.getServer().getResourceManager(); //gets the ResourceManager
-        System.out.println("serverStartingEvent Achieved!");
+        //System.out.println("serverStartingEvent Achieved!");
         ((IReloadableResourceManager) resourceManager).addReloadListener(recipeParser); //adds reloadlistener (/reload)
         recipeParser.loadRecipes(resourceManager); //loads recipes on world start
     }
@@ -53,7 +53,7 @@ public class ForgeEventHandler {
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 10000.0F, 0.8F + e.world.rand.nextFloat() * 0.2F);
                         e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + e.world.rand.nextFloat() * 0.2F);
                         BlockSetter.cleanFire(e.getEntityWorld(), initialStrikePos, pos);
-                        System.out.println("Lightning strike at "+e.getPosition());
+                        //System.out.println("Lightning strike at "+e.getPosition());
                     } else super.add(e);
                     return true;
                 }
