@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -89,7 +90,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                 System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
-                        ItemEntity secondEntity = new ItemEntity(world, entity.posX, entity.posY, entity.posZ,
+                        ItemEntity secondEntity = genItemEntity(world, entity.posX, entity.posY, entity.posZ,
                                 ((ItemEntity) entity).getItem().copy());
                         secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
                         System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
@@ -98,7 +99,9 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                     ItemStack returnStack = newItem.getDefaultInstance();
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
                     System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
-                    ((ItemEntity) entity).setItem(returnStack);
+                    entity.remove();
+                    entity = genItemEntity(world, entity.posX, entity.posY, entity.posZ, returnStack);
+                    world.addEntity(entity);
                     System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
                     entityMod = true;
                 }
@@ -149,7 +152,10 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
             }
         });
         return sentPower.get();
-    } private IEnergyStorage genEnergy(){
+    } protected ItemEntity genItemEntity(World world, double x, double y, double z, ItemStack item){
+        return new ItemEntity(world, x, y, z, item);
+    }
+    private IEnergyStorage genEnergy(){
         return new AttractorEnergyStorage(maxEnergyStorage, maxEnergyStorage);
     } private IItemHandler createHandler(){
         return new ItemStackHandler();

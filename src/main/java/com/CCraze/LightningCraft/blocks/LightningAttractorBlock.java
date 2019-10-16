@@ -31,12 +31,12 @@ import java.util.List;
 
 public class LightningAttractorBlock extends Block{
 
-    private final double chanceToStrike;
-    private final int maxDist;
-    private final int maxEnergyStorage;
-    private final boolean energyCap;
+    protected final double chanceToStrike;
+    protected final int maxDist;
+    protected final int maxEnergyStorage;
+    protected final boolean energyCap;
     private final String registryName;
-    private double modifier;
+    protected double modifier;
 
     public LightningAttractorBlock(Properties blockProperties, String configStr, String registryName){
         super(blockProperties);
