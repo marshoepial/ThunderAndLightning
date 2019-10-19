@@ -18,6 +18,11 @@ Todo:
    -Storm Furnace - create thunderstorms at your own will!
    -Lightning Wand - Attack others with the power of storms!
    
+Installation:
+    This mod depends on Forge for Minecraft version 1.14.4, which can be found at https://files.minecraftforge.net/. Please be sure that you first have Forge installed in a Minecraft instance before installing LightningCraft.
+    First, run the Mincraft instance with Forge installed at least once. This generates the folders and files LightningCraft requires.
+    Then, add the .jar LightningCraft file to the mods folder of your Minecraft instance. The jar file can be found in this mod's CurseForge page, or can be generated from the source code by running the gradle command "build".
+   
 The Basics:
    -Getting Lightning to Strike your Attractor
       =The chance of your lightning attractor block being struck is based on its tier and its modifier.
