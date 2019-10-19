@@ -1,6 +1,6 @@
 This mod is under the GNU LGPL (Lesser General Public License) v3. Essentially, this means that any copies, modifications, or distributions for this mod must:
   - Include the source code (e.g. post it to GitHub or make it available on another service online)
-  - Include the original in some way (e.g. distribute the original mod with it, or link to LightningCraft's CurseForge or GitHub)
+  - Include the original in some way (e.g. distribute the original mod with it, or link to Thunder and Lightning's CurseForge or GitHub)
   - State all changes to the original (again, GitHub is a great way to track this)
   - Use the LGPLv3 license in derivative mods (you can't use MIT or another license in a derivative of this mod)
   
@@ -11,10 +11,10 @@ In exchange, you (the user) are able to:
   
 Some exceptions are:
   - Minecraft itself: via LGPL, libraries that a paid software that is not GPL3 or LGPL3 (such as Minecraft) uses can still be covered. This is different from regular GPL3, which requires any software licensed by it to not be used as a library of a software that does not use GPL3.
-  - Modpacks: Despite the intracacies of modpacks, defined as collections of mods that have been curated to work together, they are not required to use the LGPL3 license. This is true as long as this mod has not been modified in its distribution with a modpack and the modpack has some reference to the LightningCraft GitHub or CurseForge page visible through its distribution medium. If this mod were taken out of a modpack, individually, this mod would still be licensed under LGPL3.
-  - Clarification of modification: This mod is not considered modified if only a config file is changed, which can be found in "config/lightningcraft". Modification of config files are an intended usage of this software, and so if the mod is distributed with only modified config files, the mod would be considered identical to the original.
+  - Modpacks: Despite the intracacies of modpacks, defined as collections of mods that have been curated to work together, they are not required to use the LGPL3 license. This is true as long as this mod has not been modified in its distribution with a modpack and the modpack has some reference to the Thunder and Lightning GitHub or CurseForge page visible through its distribution medium. If this mod were taken out of a modpack, individually, this mod would still be licensed under LGPL3.
+  - Clarification of modification: This mod is not considered modified if only a config file is changed, which can be found in "config/Thunder and Lightning". Modification of config files are an intended usage of this software, and so if the mod is distributed with only modified config files, the mod would be considered identical to the original.
 
-Ahead is the full GNU GPLv3 license. LGPL3, built to be an extension to GPL3, can be found in the COPYING.LESSER file in the root directory. Do not confuse the LICENSE.txt file with LightningCraft's own license - that is the license for Forge.
+Ahead is the full GNU GPLv3 license. LGPL3, built to be an extension to GPL3, can be found in the COPYING.LESSER file in the root directory. Do not confuse the LICENSE.txt file with Thunder and Lightning's own license - that is the license for Forge.
 
 
                     GNU GENERAL PUBLIC LICENSE

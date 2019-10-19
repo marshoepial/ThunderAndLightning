@@ -1,12 +1,11 @@
-    __    _       __    __        _             ______           ______ 
-   / /   (_)___ _/ /_  / /_____  (_)___  ____ _/ ____/________ _/ __/ /_
-  / /   / / __ `/ __ \/ __/ __ \/ / __ \/ __ `/ /   / ___/ __ `/ /_/ __/
- / /___/ / /_/ / / / / /_/ / / / / / / / /_/ / /___/ /  / /_/ / __/ /_  
-/_____/_/\__, /_/ /_/\__/_/ /_/_/_/ /_/\__, /\____/_/   \__,_/_/  \__/  
-        /____/                        /____/                            
-
-                              LightningCraft
-                       ~~A Mod For Minecraft 1.14.4~~
+  ________                    __                             __   __    _       __    __        _
+ /_  __/ /_  __  ______  ____/ /__  _____   ____ _____  ____/ /  / /   (_)___ _/ /_  / /_____  (_)___  ____ _
+  / / / __ \/ / / / __ \/ __  / _ \/ ___/  / __ `/ __ \/ __  /  / /   / / __ `/ __ \/ __/ __ \/ / __ \/ __ `/
+ / / / / / / /_/ / / / / /_/ /  __/ /     / /_/ / / / / /_/ /  / /___/ / /_/ / / / / /_/ / / / / / / / /_/ /
+/_/ /_/ /_/\__,_/_/ /_/\__,_/\___/_/      \__,_/_/ /_/\__,_/  /_____/_/\__, /_/ /_/\__/_/ /_/_/_/ /_/\__, /
+                                                                      /____/                        /____/
+                                        Thunder and Lightning
+                                     ~~A Mod For Minecraft 1.14.4~~
 
 Features:
    -Lightning Attractor Blocks - Attract lightning!
@@ -19,9 +18,9 @@ Todo:
    -Lightning Wand - Attack others with the power of storms!
    
 Installation:
-    This mod depends on Forge for Minecraft version 1.14.4, which can be found at https://files.minecraftforge.net/. Please be sure that you first have Forge installed in a Minecraft instance before installing LightningCraft.
-    First, run the Mincraft instance with Forge installed at least once. This generates the folders and files LightningCraft requires.
-    Then, add the .jar LightningCraft file to the mods folder of your Minecraft instance. The jar file can be found in this mod's CurseForge page, or can be generated from the source code by running the gradle command "build".
+    This mod depends on Forge for Minecraft version 1.14.4, which can be found at https://files.minecraftforge.net/. Please be sure that you first have Forge installed in a Minecraft instance before installing Thunder and Lightning.
+    First, run the Mincraft instance with Forge installed at least once. This generates the folders and files Thunder and Lightning requires.
+    Then, add the .jar Thunder and Lightning file to the mods folder of your Minecraft instance. The jar file can be found in this mod's CurseForge page, or can be generated from the source code by running the gradle command "build".
    
 The Basics:
    -Getting Lightning to Strike your Attractor
@@ -40,7 +39,7 @@ The Basics:
 
 Configs:
 
-There are two config files in this mod. The first, lightningcraft.conf, is used for modifying general values. Currently it is used for modifying the base values for each lightning attractor tier. The second, recipes.json, is used to modify the lightning attractor recipes. Its base structure is as such:
+There are two config files in this mod. The first, Thunder and Lightning.conf, is used for modifying general values. Currently it is used for modifying the base values for each lightning attractor tier. The second, recipes.json, is used to modify the lightning attractor recipes. Its base structure is as such:
 [
     {
       "initial": "minecraft:redstone",

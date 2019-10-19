@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "wdw",
+    "dcd",
+    "wdw"
+  ],
+  "key": {
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "c": {
+      "type": "forge:nbt",
+      "item": "thunderandlightning:electrumcoil",
+      "nbt": {"ability":25}
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "result": {
+    "item": "thunderandlightning:diamondlightningattractor",
+    "nbt": {"ability": 25}
+  }
+}

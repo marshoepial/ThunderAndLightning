@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "www",
+    "wbw",
+    "www"
+  ],
+  "key": {
+    "b": {
+      "type": "forge:nbt",
+      "item": "thunderandlightning:tempestuousblend",
+      "nbt": {"ability":50}
+    },
+    "w": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "result": {
+    "item": "thunderandlightning:woollightningattractor",
+    "nbt": {"ability": 50}
+  }
+}

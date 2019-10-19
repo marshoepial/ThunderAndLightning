@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "xbx",
+    "xax",
+    "xbx"
+  ],
+  "key": {
+    "x": {
+      "item": "minecraft:iron_ingot"
+    },
+    "a": {
+      "type": "forge:nbt",
+      "item": "thunderandlightning:tempestuousblend",
+      "nbt": {"ability":25}
+    },
+    "b": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "thunderandlightning:electrumcoil",
+    "nbt": {"ability": 25}
+  }
+}
