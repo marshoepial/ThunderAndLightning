@@ -20,7 +20,7 @@ displayName="LightningCraft" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 # updateJSONURL="https://www.google.com" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-# displayURL="https://www.google.com" #optional
+# displayURL="https://github.com/DashEightMate/LightningCraft/tree/master" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="logoFile.png" #optional
 # A text field displayed in the mod UI
