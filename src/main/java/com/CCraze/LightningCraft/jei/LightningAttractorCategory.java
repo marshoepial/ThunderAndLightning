@@ -74,8 +74,8 @@ public class LightningAttractorCategory implements IRecipeCategory<LightningAttr
         itemStackGroup.set(0, lightningAttractorRecipe.getInputIngredient());
         itemStackGroup.init(1, false, 55, 18);
         itemStackGroup.set(1, lightningAttractorRecipe.getOutputIngredient());
-        //itemStackGroup.init(2, false, 0, 38);
-        //itemStackGroup.set(2, ModVals.attractorList);
+        itemStackGroup.init(2, false, 0, 38);
+        itemStackGroup.set(2, ModVals.attractorList);
 
     }
 
