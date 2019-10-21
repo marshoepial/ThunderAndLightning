@@ -6,14 +6,20 @@ import com.CCraze.ThunderAndLightning.blocks.lightningattractors.DiamondLightnin
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.IronLightningAttractor;
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.WoolLightningAttractor;
 import com.CCraze.ThunderAndLightning.config.ThunderLightningConfig;
+import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import com.CCraze.ThunderAndLightning.items.ElectrumCoil;
 import com.CCraze.ThunderAndLightning.items.LightningAttractorBlockItem;
 import com.CCraze.ThunderAndLightning.items.TempestuousBlend;
+import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
+import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
 import com.CCraze.ThunderAndLightning.setup.ClientProxy;
 import com.CCraze.ThunderAndLightning.setup.IProxy;
 import com.CCraze.ThunderAndLightning.setup.ModVals;
 import com.CCraze.ThunderAndLightning.setup.ServerProxy;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -47,6 +53,9 @@ public class ThunderAndLightning {
 
     private void setup(final FMLCommonSetupEvent event) {
         new ModVals();
+        proxy.init();
+        int packetId = 0;
+        TAndLPacketHandler.INSTANCE.registerMessage(packetId++, BlueBoltEntityPacket.class, BlueBoltEntityPacket::encode, BlueBoltEntityPacket::decode, BlueBoltEntityPacket::onReceive);
     }
 
 
@@ -88,6 +97,10 @@ public class ThunderAndLightning {
                     .setRegistryName("lightningattractortile"));
         }
 
+        @SubscribeEvent
+        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event){
+            event.getRegistry().register(EntityType.Builder.<BlueLightningBolt>create(EntityClassification.MISC).disableSerialization().size(0, 0).build("bluebolt").setRegistryName(MODID, "bluebolt"));
+        }
 
 
     }

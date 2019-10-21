@@ -3,6 +3,10 @@ package com.CCraze.ThunderAndLightning.setup;
 import com.CCraze.ThunderAndLightning.ThunderAndLightning;
 import com.CCraze.ThunderAndLightning.blocks.ModBlocks;
 import com.CCraze.ThunderAndLightning.config.ThunderLightningConfig;
+import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 

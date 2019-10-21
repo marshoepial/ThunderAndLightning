@@ -14,7 +14,7 @@ public class ThunderAndLightningJEIPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation("lightningcraft", "lightningcraft");
+        return new ResourceLocation("thunderandlightning", "thunderandlightning");
     }
 
     @Override
@@ -26,6 +26,6 @@ public class ThunderAndLightningJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(ForgeEventHandler.recipeParser.getRecipeList(), new ResourceLocation("lightningcraft", "lightningattractor"));
+        registration.addRecipes(ForgeEventHandler.recipeParser.getRecipeList(), new ResourceLocation("thunderandlightning", "thunderandlightning"));
     }
 }
