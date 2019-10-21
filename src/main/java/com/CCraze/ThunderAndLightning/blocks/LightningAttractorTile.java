@@ -2,6 +2,7 @@ package com.CCraze.ThunderAndLightning.blocks;
 
 import com.CCraze.ThunderAndLightning.ForgeEventHandler;
 import com.CCraze.ThunderAndLightning.behavior.AttractorEnergyStorage;
+import com.CCraze.ThunderAndLightning.behavior.BlockSetter;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -90,8 +91,8 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                 //System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
-                        ItemEntity secondEntity = genItemEntity(world, entity.posX, entity.posY, entity.posZ,
-                                ((ItemEntity) entity).getItem().copy());
+                        ItemEntity secondEntity = BlockSetter.genFireImmuneIS(genItemEntity(world, entity.posX, entity.posY, entity.posZ,
+                                ((ItemEntity) entity).getItem().copy()));
                         secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
                         //System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
                         world.addEntity(secondEntity);
@@ -100,7 +101,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
                     //System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     entity.remove();
-                    entity = genItemEntity(world, entity.posX, entity.posY, entity.posZ, returnStack);
+                    entity = BlockSetter.genFireImmuneIS(genItemEntity(world, entity.posX, entity.posY, entity.posZ, returnStack));
                     world.addEntity(entity);
                     //System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
                     entityMod = true;
