@@ -77,7 +77,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
 
         if (world.getWorldInfo().isThundering()) {
             if (Math.random() > 0.999) {
-                BlueLightningBolt blueBolt = new BlueLightningBolt(world, getPos().getX(), getYWithOffset(), getPos().getY(), false);
+                BlueLightningBolt blueBolt = new BlueLightningBolt(world, getPos().getX(), getYWithOffset(), getPos().getZ(), false);
                 world.addEntity(blueBolt);
                 TAndLPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
                         new BlueBoltEntityPacket(blueBolt.getEntityId(), blueBolt.posX, blueBolt.posY, blueBolt.posZ));

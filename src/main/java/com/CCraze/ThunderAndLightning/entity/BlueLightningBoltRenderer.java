@@ -3,6 +3,7 @@ package com.CCraze.ThunderAndLightning.entity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LightningBoltRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -15,13 +16,19 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
-public class BlueLightningBoltRenderer extends LightningBoltRenderer {
+public class BlueLightningBoltRenderer extends EntityRenderer<BlueLightningBolt> {
     public BlueLightningBoltRenderer(EntityRendererManager p_i46157_1_) {
         super(p_i46157_1_);
     }
 
+    @Nullable
     @Override
-    public void doRender(LightningBoltEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    protected ResourceLocation getEntityTexture(BlueLightningBolt blueLightningBolt) {
+        return null;
+    }
+
+    @Override
+    public void doRender(BlueLightningBolt entity, double x, double y, double z, float entityYaw, float partialTicks) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.disableTexture();
@@ -105,8 +112,8 @@ public class BlueLightningBoltRenderer extends LightningBoltRenderer {
                             d11 += d7 * 2.0D;
                         }
 
-                        bufferbuilder.pos(d10 + d2, y + (double)(i1 * 16), d11 + d3).color(0.45F, 0.45F, 0.65F, 0.3F).endVertex();
-                        bufferbuilder.pos(d8 + d4, y + (double)((i1 + 1) * 16), d9 + d5).color(0.45F, 0.45F, 0.65F, 0.3F).endVertex();
+                        bufferbuilder.pos(d10 + d2, y + (double)(i1 * 16), d11 + d3).color(0.25F, 0.25F, 0.9F, 0.4F).endVertex();
+                        bufferbuilder.pos(d8 + d4, y + (double)((i1 + 1) * 16), d9 + d5).color(0.25F, 0.25F, 0.9F, 0.4F).endVertex();
                     }
 
                     tessellator.draw();
@@ -118,4 +125,6 @@ public class BlueLightningBoltRenderer extends LightningBoltRenderer {
         GlStateManager.enableLighting();
         GlStateManager.enableTexture();
     }
+
+
 }
