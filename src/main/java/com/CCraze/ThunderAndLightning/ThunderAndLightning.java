@@ -1,10 +1,7 @@
 package com.CCraze.ThunderAndLightning;
 
 import com.CCraze.ThunderAndLightning.blocks.*;
-import com.CCraze.ThunderAndLightning.blocks.lightningattractors.CreativeLightningAttractor;
-import com.CCraze.ThunderAndLightning.blocks.lightningattractors.DiamondLightningAttractor;
-import com.CCraze.ThunderAndLightning.blocks.lightningattractors.IronLightningAttractor;
-import com.CCraze.ThunderAndLightning.blocks.lightningattractors.WoolLightningAttractor;
+import com.CCraze.ThunderAndLightning.blocks.lightningattractors.*;
 import com.CCraze.ThunderAndLightning.config.ThunderLightningConfig;
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import com.CCraze.ThunderAndLightning.items.ElectrumCoil;
@@ -19,7 +16,6 @@ import com.CCraze.ThunderAndLightning.setup.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;

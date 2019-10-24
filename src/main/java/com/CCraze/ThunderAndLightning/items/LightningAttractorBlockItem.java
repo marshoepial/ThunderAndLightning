@@ -1,6 +1,6 @@
 package com.CCraze.ThunderAndLightning.items;
 
-import com.CCraze.ThunderAndLightning.blocks.LightningAttractorBlock;
+import com.CCraze.ThunderAndLightning.blocks.lightningattractors.LightningAttractorBlock;
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.WoolLightningAttractor;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.Screen;

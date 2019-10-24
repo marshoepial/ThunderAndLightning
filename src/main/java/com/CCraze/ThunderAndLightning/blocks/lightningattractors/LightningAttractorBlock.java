@@ -1,4 +1,4 @@
-package com.CCraze.ThunderAndLightning.blocks;
+package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 
 import com.CCraze.ThunderAndLightning.ThunderAndLightning;
 import com.CCraze.ThunderAndLightning.items.LightningAttractorBlockItem;

@@ -1,10 +1,12 @@
-package com.CCraze.ThunderAndLightning.blocks;
+package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 
 import com.CCraze.ThunderAndLightning.ForgeEventHandler;
 import com.CCraze.ThunderAndLightning.behavior.AttractorEnergyStorage;
+import com.CCraze.ThunderAndLightning.blocks.lightningattractors.LightningAttractorBlock;
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
 import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
+import com.CCraze.ThunderAndLightning.weather.TempestWeather;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -18,10 +20,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -35,7 +33,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,23 +63,20 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
 
     @Override
     public void tick() {
-        if (world.isRemote || !canStoreEnergy) return;
-        energy.ifPresent(e -> {
-            if (e.getEnergyStored() > 0){
-                if (!sendOutPower()){
-                    ((AttractorEnergyStorage)e).dissipateEnergy();
+        if (!world.isRemote || canStoreEnergy) {
+            energy.ifPresent(e -> {
+                if (e.getEnergyStored() > 0) {
+                    if (!sendOutPower()) {
+                        ((AttractorEnergyStorage) e).dissipateEnergy();
+                    }
                 }
-            }
-        });
+            });
+        }
 
         if (world.getWorldInfo().isThundering()) {
-            if (Math.random() > 0.999) {
-                BlueLightningBolt blueBolt = new BlueLightningBolt(world, getPos().getX(), getYWithOffset(), getPos().getZ(), false);
-                world.addEntity(blueBolt);
-                TAndLPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
-                        new BlueBoltEntityPacket(blueBolt.getEntityId(), blueBolt.posX, blueBolt.posY, blueBolt.posZ));
-            }
-        }
+            if (!TempestWeather.tempestActive) TempestWeather.beginTempest(world);
+            TempestWeather.ticked(world, world.getChunkAt(getPos()));
+        } else if (TempestWeather.tempestActive) TempestWeather.endTempest();
     }
 
     public boolean isValid(){

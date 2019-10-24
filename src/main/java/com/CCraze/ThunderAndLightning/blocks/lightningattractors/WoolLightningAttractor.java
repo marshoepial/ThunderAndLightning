@@ -1,7 +1,5 @@
 package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 
-import com.CCraze.ThunderAndLightning.blocks.LightningAttractorBlock;
-import com.CCraze.ThunderAndLightning.blocks.LightningAttractorTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;

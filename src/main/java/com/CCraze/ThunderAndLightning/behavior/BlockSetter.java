@@ -1,6 +1,6 @@
 package com.CCraze.ThunderAndLightning.behavior;
 
-import com.CCraze.ThunderAndLightning.blocks.LightningAttractorTile;
+import com.CCraze.ThunderAndLightning.blocks.lightningattractors.LightningAttractorTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
