@@ -15,7 +15,7 @@
       "nbt": {"ability":50}
     },
     "b": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

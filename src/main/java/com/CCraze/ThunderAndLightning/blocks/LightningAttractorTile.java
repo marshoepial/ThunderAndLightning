@@ -97,7 +97,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                         //System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
                         world.addEntity(secondEntity);
                     }
-                    ItemStack returnStack = newItem.getDefaultInstance();
+                    ItemStack returnStack = new ItemStack(newItem);
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
                     //System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     entity.remove();
