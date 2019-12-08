@@ -5,6 +5,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -58,6 +60,17 @@ public class BlockSetter {
                 }
             }
         }
+    } public static ItemEntity genFireImmuneIS (ItemEntity itemEntity){
+        return new ItemEntity(itemEntity.getEntityWorld(), itemEntity.posX, itemEntity.posY, itemEntity.posZ, itemEntity.getItem()){
+            @Override
+            public boolean isImmuneToExplosions() {
+                return true;
+            }
+
+            @Override
+            protected void dealFireDamage(int p_70081_1_) {
+            }
+        };
     }
     private static double distanceCalc(int x1, int z1, int x2, int z2){
         return Math.sqrt(((x1-x2)*(x1-x2))+((z1-z2)*(z1-z2)));

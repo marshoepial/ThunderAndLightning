@@ -13,6 +13,7 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.*;
@@ -57,8 +58,8 @@ public class LightningRecipeParser implements IFutureReloadListener{
                 jsonArray = (JsonArray) jsonParser.parse(new InputStreamReader(streamInExternal, StandardCharsets.UTF_8));
                 jsonArray.forEach(iterate -> { //iterate over each recipe
                     JsonObject currentObj = (JsonObject) iterate;
-                    ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
-                    ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
+                    ItemStack initial = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString()))); //initial block/item
+                    ItemStack Final = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString()))); //final block/item
                     int maxCreate = currentObj.get("maxRepeat").getAsInt();
                     System.out.println("LightningRecipe generated: " + initial + " -> " + Final + " with max repeat of " + maxCreate);
                     recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
@@ -71,15 +72,15 @@ public class LightningRecipeParser implements IFutureReloadListener{
         jsonArray = (JsonArray)jsonParser.parse(new InputStreamReader(streamInInternal, StandardCharsets.UTF_8));
         jsonArray.forEach(iterate -> { //iterate over each recipe
             JsonObject currentObj = (JsonObject) iterate;
-            ItemStack initial = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString())).getDefaultInstance(); //initial block/item
-            ItemStack Final = ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString())).getDefaultInstance(); //final block/item
+            ItemStack initial = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("initial").getAsString()))); //initial block/item
+            ItemStack Final = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(currentObj.get("final").getAsString()))); //final block/item
             int maxCreate = currentObj.get("maxRepeat").getAsInt();
             System.out.println("LightningRecipe generated: "+initial+" -> "+Final+" with max repeat of "+ maxCreate);
             recipeList.add(new LightningAttractorRecipe(initial, Final, maxCreate));
         });
     }
     public Item swapItem (Item inItem){
-        ItemStack inStack = inItem.getDefaultInstance();
+        ItemStack inStack = new ItemStack(inItem);
         int index = -1;
         for (int i = 0; i < recipeList.size(); i++){
             //System.out.println("Comparing "+recipeList.get(i).getInputIngredient().getItem()+" and "+inStack.getItem());
@@ -95,7 +96,7 @@ public class LightningRecipeParser implements IFutureReloadListener{
         }
         return inItem;
     } public Block swapBlock (Block inBlock){
-        ItemStack inStack = inBlock.asItem().getDefaultInstance();
+        ItemStack inStack = new ItemStack(inBlock.asItem());
         ItemStack outStack = inStack;
         for (LightningAttractorRecipe lightningAttractorRecipe : recipeList) {
             if (lightningAttractorRecipe.getInputIngredient().getItem().equals(inStack.getItem())) {
@@ -106,7 +107,7 @@ public class LightningRecipeParser implements IFutureReloadListener{
         if (outStack != inStack && outStack.getItem() instanceof BlockItem) return ((BlockItem) outStack.getItem()).getBlock();
         return inBlock;
     } public int getMaxRepeat (Item inItem){
-        ItemStack inStack = inItem.getDefaultInstance();
+        ItemStack inStack = new ItemStack(inItem);
         int maxRepeat = -1;
         for (LightningAttractorRecipe lightningAttractorRecipe : recipeList) {
             if (lightningAttractorRecipe.getInputIngredient().getItem().equals(inStack.getItem())) {

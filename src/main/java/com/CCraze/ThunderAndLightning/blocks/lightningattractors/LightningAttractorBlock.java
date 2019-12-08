@@ -80,10 +80,11 @@ public class LightningAttractorBlock extends Block{
 
     @Override
     public List<ItemStack> getDrops(BlockState bs, LootContext.Builder builder) {
-        //System.out.println("TileEntity is "+builder.get(LootParameters.BLOCK_ENTITY));
+        System.out.println("TileEntity is "+builder.get(LootParameters.BLOCK_ENTITY));
         if (builder.get(LootParameters.BLOCK_ENTITY) instanceof LightningAttractorTile) {
             List<ItemStack> drops = new ArrayList<>();
-            ItemStack labi = ForgeRegistries.ITEMS.getValue(new ResourceLocation("lightningcraft:" + registryName)).getDefaultInstance();
+            ItemStack labi = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("thunderandlightning:" + registryName)));
+            System.out.println("ItemStack is "+labi);
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("ability", (int) Math.round(((LightningAttractorTile) builder.get(LootParameters.BLOCK_ENTITY))
                     .getModifier() * 100));
