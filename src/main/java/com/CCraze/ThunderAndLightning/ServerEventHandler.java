@@ -2,8 +2,6 @@ package com.CCraze.ThunderAndLightning;
 
 import com.CCraze.ThunderAndLightning.behavior.BlockSetter;
 import com.CCraze.ThunderAndLightning.behavior.LightningRecipeParser;
-import com.CCraze.ThunderAndLightning.weather.TempestWeather;
-import net.minecraft.command.impl.SummonCommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -14,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +23,7 @@ import java.util.ArrayList;
 
 
 @Mod.EventBusSubscriber
-public class ForgeEventHandler {
+public class ServerEventHandler {
     public static LightningRecipeParser recipeParser = new LightningRecipeParser();
 
     @SubscribeEvent
@@ -61,15 +58,6 @@ public class ForgeEventHandler {
                     return true;
                 }
             }, "field_217497_w"); //globalEntities obfuscated name
-        }
-    }
-
-    @SubscribeEvent
-    public static void changeFogColor(EntityViewRenderEvent.FogColors event){
-        if (TempestWeather.tempestActive){
-            event.setRed((float)TempestWeather.getFogRed());
-            event.setBlue((float) TempestWeather.getFogBlue());
-            event.setGreen((float) TempestWeather.getFogGreen());
         }
     }
 }

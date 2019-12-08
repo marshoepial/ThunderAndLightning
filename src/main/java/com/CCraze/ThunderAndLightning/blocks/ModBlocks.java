@@ -1,6 +1,8 @@
 package com.CCraze.ThunderAndLightning.blocks;
 
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.*;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederBlock;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -13,9 +15,11 @@ public class ModBlocks {
     public static DiamondLightningAttractor DIAMONDLIGHTNINGATTRACTOR;
     @ObjectHolder("thunderandlightning:woollightningattractor")
     public static WoolLightningAttractor WOOLLIGHTNINGATTRACTOR;
+    @ObjectHolder("thunderandlightning:skyseeder")
+    public static SkySeederBlock SKYSEEDER;
 
     @ObjectHolder("thunderandlightning:lightningattractortile")
     public static TileEntityType<LightningAttractorTile> LIGHTNINGATTRACTOR_TILE;
     @ObjectHolder("thunderandlightning:skyseedertile")
-    public static TileEntityType<SkySeederTileEntity> SKYSEEDER_TILE;
+    public static TileEntityType<SkySeederTile> SKYSEEDER_TILE;
 }

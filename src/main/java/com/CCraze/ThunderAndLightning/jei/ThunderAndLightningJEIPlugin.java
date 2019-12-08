@@ -1,6 +1,6 @@
 package com.CCraze.ThunderAndLightning.jei;
 
-import com.CCraze.ThunderAndLightning.ForgeEventHandler;
+import com.CCraze.ThunderAndLightning.ServerEventHandler;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -26,6 +26,6 @@ public class ThunderAndLightningJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(ForgeEventHandler.recipeParser.getRecipeList(), new ResourceLocation("thunderandlightning", "lightningattractor"));
+        registration.addRecipes(ServerEventHandler.recipeParser.getRecipeList(), new ResourceLocation("thunderandlightning", "thunderandlightning"));
     }
 }

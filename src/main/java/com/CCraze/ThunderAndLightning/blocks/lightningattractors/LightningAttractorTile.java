@@ -1,11 +1,8 @@
 package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 
-import com.CCraze.ThunderAndLightning.ForgeEventHandler;
+import com.CCraze.ThunderAndLightning.ServerEventHandler;
 import com.CCraze.ThunderAndLightning.behavior.AttractorEnergyStorage;
-import com.CCraze.ThunderAndLightning.blocks.lightningattractors.LightningAttractorBlock;
-import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
-import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
-import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
 import com.CCraze.ThunderAndLightning.weather.TempestWeather;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -25,7 +22,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -74,9 +70,12 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         }
 
         if (world.getWorldInfo().isThundering()) {
-            if (!TempestWeather.tempestActive) TempestWeather.beginTempest(world);
-            TempestWeather.ticked(world, world.getChunkAt(getPos()));
+            if (!TempestWeather.tempestActive && world.isRemote) TempestWeather.beginTempest(world);
+            if (world.isRemote) TempestWeather.ticked(world, world.getChunkAt(getPos()));
         } else if (TempestWeather.tempestActive) TempestWeather.endTempest();
+        if (world.getTileEntity(pos.up()) instanceof SkySeederTile && ((SkySeederTile) world.getTileEntity(pos.up())).pitch == 0){
+            ((SkySeederTile) world.getTileEntity(pos.up())).activateSeeder();
+        }
     }
 
     public boolean isValid(){
@@ -97,8 +96,8 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         for (Entity entity : entityList) {
             if (entity instanceof ItemEntity && !entityMod) {
                 //System.out.println("Item found, replacing...");
-                Item newItem = ForgeEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
-                int maxRepeat = ForgeEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
+                Item newItem = ServerEventHandler.recipeParser.swapItem(((ItemEntity) entity).getItem().getItem());
+                int maxRepeat = ServerEventHandler.recipeParser.getMaxRepeat(((ItemEntity) entity).getItem().getItem());
                 //System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
@@ -123,7 +122,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
         }
         if(world.getBlockState(getPos().up()) != Blocks.AIR.getDefaultState()){
             //System.out.println("Block above attractor detected, replacing...");
-            world.setBlockState(getPos().up(), ForgeEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
+            world.setBlockState(getPos().up(), ServerEventHandler.recipeParser.swapBlock(world.getBlockState(getPos().up()).getBlock()).getDefaultState());
         } else if (canStoreEnergy) {
             //System.out.println("No blocks above attractor, no items, giving energy");
 

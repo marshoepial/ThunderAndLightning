@@ -29,7 +29,7 @@ public class TempestWeather {
         }
     }
     public static void ticked (World world, Chunk chunk){
-        if (tempestActive && world.dimension.canDoLightning(chunk) && rand.nextInt(10000) == 0){
+        if (tempestActive && world.dimension.canDoLightning(chunk) && rand.nextInt(1000) == 0){
             int x  = rand.nextInt(15)+chunk.getPos().getXStart();
             int z = rand.nextInt(15)+chunk.getPos().getZStart();
             BlockPos pos = new BlockPos(x, chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, x, z), z);

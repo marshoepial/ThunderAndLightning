@@ -1,0 +1,13 @@
+{
+  "multipart": [
+    {"when":  {"usemodel": "1"},
+    "apply": {"model":  "thunderandlightning:block/skyseeder/head"}
+    },
+    {"when":  {"usemodel": "2"},
+    "apply": {"model":  "thunderandlightning:block/skyseeder/fan"}
+    },
+    {"when":  {"usemodel":  "3"},
+    "apply":  {"model":  "thunderandlightning:block/skyseeder/base"}
+    }
+  ]
+}

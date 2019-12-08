@@ -2,10 +2,13 @@ package com.CCraze.ThunderAndLightning;
 
 import com.CCraze.ThunderAndLightning.blocks.*;
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.*;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederBlock;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
 import com.CCraze.ThunderAndLightning.config.ThunderLightningConfig;
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import com.CCraze.ThunderAndLightning.items.ElectrumCoil;
 import com.CCraze.ThunderAndLightning.items.LightningAttractorBlockItem;
+import com.CCraze.ThunderAndLightning.items.SkySeederBlockItem;
 import com.CCraze.ThunderAndLightning.items.TempestuousBlend;
 import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
 import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
@@ -18,6 +21,10 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -29,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("thunderandlightning")
@@ -51,6 +59,7 @@ public class ThunderAndLightning {
         new ModVals();
         proxy.init();
         int packetId = 0;
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> { FMLJavaModLoadingContext.get().getModEventBus().register(ClientEventHandler.class); });
         TAndLPacketHandler.INSTANCE.registerMessage(packetId++, BlueBoltEntityPacket.class, BlueBoltEntityPacket::encode, BlueBoltEntityPacket::decode, BlueBoltEntityPacket::onReceive);
     }
 
@@ -65,6 +74,7 @@ public class ThunderAndLightning {
             if (!(boolean)CONFIG.readFromConfig("Iron IsDisabled")) event.getRegistry().register(new IronLightningAttractor());
             if (!(boolean)CONFIG.readFromConfig("Diamond IsDisabled")) event.getRegistry().register(new DiamondLightningAttractor());
             if (!(boolean)CONFIG.readFromConfig("Wool IsDisabled")) event.getRegistry().register(new WoolLightningAttractor());
+            event.getRegistry().register(new SkySeederBlock());
         }
 
         @SubscribeEvent
@@ -77,6 +87,8 @@ public class ThunderAndLightning {
                             new Item.Properties().group(ModVals.modGroup)).setRegistryName("diamondlightningattractor"));
             if (!(boolean)CONFIG.readFromConfig("Wool IsDisabled")) event.getRegistry().register(new LightningAttractorBlockItem(ModBlocks.WOOLLIGHTNINGATTRACTOR,
                             new Item.Properties().group(ModVals.modGroup)).setRegistryName("woollightningattractor"));
+            event.getRegistry().register(new SkySeederBlockItem(ModBlocks.SKYSEEDER, new Item.Properties().group(ModVals.modGroup)).setRegistryName("skyseeder"));
+
             event.getRegistry().register(new TempestuousBlend());
             event.getRegistry().register(new ElectrumCoil());
         }
@@ -91,11 +103,20 @@ public class ThunderAndLightning {
             Block[] lightingAttractorBlockArray = lightningAttractorBlockList.toArray(new Block[0]);
             event.getRegistry().register(TileEntityType.Builder.create(LightningAttractorTile::new, lightingAttractorBlockArray).build(null)
                     .setRegistryName("lightningattractortile"));
+            event.getRegistry().register(TileEntityType.Builder.create(LightningAttractorTile::new, ModBlocks.SKYSEEDER).build(null)
+                    .setRegistryName("skyseedertile"));
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event){
             event.getRegistry().register(EntityType.Builder.<BlueLightningBolt>create(EntityClassification.MISC).disableSerialization().size(0, 0).build("bluebolt").setRegistryName(MODID, "bluebolt"));
+        }
+
+        @SubscribeEvent
+        public static void onModelRegistry(final ModelRegistryEvent event){
+            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_BASE);
+            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_FAN);
+            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_HEAD);
         }
 
 
