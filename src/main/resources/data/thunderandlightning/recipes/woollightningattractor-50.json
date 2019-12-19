@@ -8,7 +8,7 @@
   "key": {
     "b": {
       "type": "forge:nbt",
-      "item": "thunderandlightning:tempestuousblend",
+      "item": "thunderandlightning:tempestuous_blend",
       "nbt": {"ability":50}
     },
     "w": {

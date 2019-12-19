@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [{
-    "item": "minecraft:lapis_lazuli"
+    "tag": "forge:dyes/blue"
   },
     {
-      "item": "minecraft:lapis_lazuli"
+      "tag": "forge:dyes/blue"
     },
     {
-      "item": "minecraft:red_dye"
+      "tag": "forge:dyes/red"
     },
     {
-      "item": "minecraft:yellow_dye"
+      "tag": "forge:dyes/yellow"
     }
   ],
   "result": {
-    "item": "thunderandlightning:tempestuousblend",
+    "item": "thunderandlightning:tempestuous_blend",
     "nbt": {"ability": 25}
   }
 }

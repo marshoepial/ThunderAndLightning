@@ -10,8 +10,8 @@
       "maxRepeat": 64
     },
   {
-    "initial": "minecraft:water",
-    "final": "minecraft:obsidian",
+    "initial": "minecraft:water_bucket",
+    "final": "thunderandlightning:obsidian_bucket",
     "maxRepeat": 1
   },
   {

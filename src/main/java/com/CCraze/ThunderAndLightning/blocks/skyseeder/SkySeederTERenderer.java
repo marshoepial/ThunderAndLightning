@@ -12,6 +12,10 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
+//This block is interesting because I have it rendered in parts to make moving each individual part easier
+//The blockstate file for this block is a "multipart". Depending on which "useModel" value you use, the model will be different
+//This makes it easy to render the models individually while still rendering through BlockStates.
+
 //Not sided because this should be called only on client.
 public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
     public SkySeederTERenderer() {
@@ -20,10 +24,13 @@ public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
     @Override
     public void render(SkySeederTile te, double x, double y, double z, float partialTicks, int destroyStage) {
         super.render(te, x, y, z, partialTicks, destroyStage);
+
+        //get the blockstates that have the separate models
         BlockState headState = te.getBlockState().with(SkySeederBlock.modelProperty, 1);
         BlockState fanState = te.getBlockState().with(SkySeederBlock.modelProperty, 2);
         BlockState baseState = te.getBlockState().with(SkySeederBlock.modelProperty, 3);
 
+        //the math that calculates how everything should move on the model
         double ticks = te.getWorld().getDayTime() + partialTicks;
         if (te.prevTicks == 0) te.prevTicks = ticks;
         double tickDiff = ticks - te.prevTicks;
@@ -51,11 +58,15 @@ public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
 
         te.realFanRot = te.realFanRPT*tickDiff + te.realFanRot;
         if (te.realFanRot >= 360) te.realFanRot = te.realFanRot - 360;
+
+        //actually render things. custom method to cut down on code. the first obj array is for the rotations, the second tells how each model should be offset after rotating
         renderPart(te, headState, x, y, z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D},{te.realPitch, 1.0D, 0.0D, 0.0D}}, new Double[]{0.5D, 0.5D, 0.5D});
         renderPart(te, baseState, x, y, z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D}}, new Double[]{0.5D, 0.5D, 0.5D});
         renderPart(te, fanState, x, y ,z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D},{te.realPitch, 1.0D, 0.0D, 0.0D},{te.realFanRot, 0.0D, 0.0D, 1.0D}}, new Double[]{0.5D, 0.63D, 0.5D});
     }
     public void renderPart(SkySeederTile te, BlockState bs, double x, double y, double z, Object[][] rotations, Double[] offsets){
+        //most of this code is cut-and-paste from other sources. I can't comment on much of it because opengl is foreign to me
+        //this is also pretty much a catch-all for most basic tesr rendering, you can copy this if you want and modify it to what you need :)
         BlockRendererDispatcher renderer = Minecraft.getInstance().getBlockRendererDispatcher();
 
         GlStateManager.pushMatrix();
@@ -73,6 +84,7 @@ public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
         BlockModelRenderer.enableCache();
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
+        //first, rotate it to where you want it to rotate around. then rotate it, and then move it to its final location in the world
         GlStateManager.translated(x + offsets[0], y + offsets[1], z+ offsets[2]);
         for (Object[] rotation : rotations) {
             GlStateManager.rotated((double)rotation[0], (double)rotation[1], (double)rotation[2], (double)rotation[3]);

@@ -1,6 +1,7 @@
 {
-  "item.thunderandlightning.tempestuousblend": "Tempestuous Blend",
-  "item.thunderandlightning.electrumcoil": "Electrum Coil",
+  "item.thunderandlightning.tempestuous_blend": "Tempestuous Blend",
+  "item.thunderandlightning.electrum_coil": "Electrum Coil",
+  "item.thunderandlightning.obsidian_bucket": "Bucket of Obsidian",
   "block.thunderandlightning.creativelightningattractor": "Creative Lightning Attractor",
   "block.thunderandlightning.ironlightningattractor": "Iron Lightning Attractor",
   "block.thunderandlightning.diamondlightningattractor": "Diamond Lightning Attractor",

@@ -11,11 +11,11 @@
       "item": "minecraft:redstone"
     },
     {
-      "item": "minecraft:yellow_dye"
+      "tag": "forge:dyes/yellow"
     }
   ],
   "result": {
-    "item": "thunderandlightning:tempestuousblend",
+    "item": "thunderandlightning:tempestuous_blend",
     "nbt": {"ability": 50}
   }
 }

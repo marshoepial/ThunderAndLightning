@@ -11,7 +11,7 @@
     },
     "c": {
       "type": "forge:nbt",
-      "item": "thunderandlightning:electrumcoil",
+      "item": "thunderandlightning:electrum_coil",
       "nbt": {"ability":25}
     },
     "w": {

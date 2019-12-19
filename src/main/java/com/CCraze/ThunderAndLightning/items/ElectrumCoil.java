@@ -20,7 +20,7 @@ public class ElectrumCoil extends Item {
 
     public ElectrumCoil() {
         super(new Item.Properties().group(ModVals.modGroup));
-        setRegistryName("electrumcoil");
+        setRegistryName("electrum_coil");
         abilityMod=100;
     }
     @Override

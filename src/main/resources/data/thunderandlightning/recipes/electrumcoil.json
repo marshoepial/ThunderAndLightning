@@ -11,7 +11,7 @@
     },
     "a": {
       "type": "forge:nbt",
-      "item": "thunderandlightning:tempestuousblend",
+      "item": "thunderandlightning:tempestuous_blend",
       "nbt": {"ability":100}
     },
     "b": {
@@ -19,7 +19,7 @@
     }
   },
   "result": {
-    "item": "thunderandlightning:electrumcoil",
+    "item": "thunderandlightning:electrum_coil",
     "nbt": {"ability": 100}
   }
 }

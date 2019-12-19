@@ -23,3 +23,8 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+forge*CREDITS.txt
+forge*fields.csv
+forge*LICENSE.txt
+forge*methods.csv
+forge*params.csv

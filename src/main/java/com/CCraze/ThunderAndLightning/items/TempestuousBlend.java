@@ -20,7 +20,7 @@ public class TempestuousBlend extends Item {
 
     public TempestuousBlend() {
         super(new Item.Properties().group(ModVals.modGroup));
-        setRegistryName("tempestuousblend");
+        setRegistryName("tempestuous_blend");
         abilityMod = 100;
     }
 
