@@ -1,4 +1,4 @@
-package com.CCraze.ThunderAndLightning.jei;
+/*package com.CCraze.ThunderAndLightning.jei;
 
 import com.CCraze.ThunderAndLightning.ServerEventHandler;
 import mezz.jei.api.IModPlugin;
@@ -28,4 +28,4 @@ public class ThunderAndLightningJEIPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(ServerEventHandler.recipeParser.getRecipeList(), new ResourceLocation("thunderandlightning", "lightningattractor"));
     }
-}
+}*/

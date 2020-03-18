@@ -1,4 +1,4 @@
-package com.CCraze.ThunderAndLightning.jei;
+/*package com.CCraze.ThunderAndLightning.jei;
 
 import com.CCraze.ThunderAndLightning.blocks.ModBlocks;
 import com.CCraze.ThunderAndLightning.recipes.LightningAttractorRecipe;
@@ -86,3 +86,4 @@ public class LightningAttractorCategory implements IRecipeCategory<LightningAttr
         this.bolt.draw(3, 1);
     }
 }
+*/

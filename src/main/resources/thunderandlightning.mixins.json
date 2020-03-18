@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.CCraze.ThunderAndLightning.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "thunderandlightning.refmap.json",
+  "mixins": [
+  ],
+  "client":[
+    "SkyColorMixin",
+    "BlueLightningBoltRenderingMixin",
+    "SkyBrightnessMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

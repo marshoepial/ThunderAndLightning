@@ -1,12 +1,15 @@
 package com.CCraze.ThunderAndLightning.behavior;
 
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.LightningAttractorTile;
+import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -15,6 +18,16 @@ import java.util.List;
 import java.util.Random;
 
 public class BlockSetter {
+    public static void boltAdded (Entity e){
+        BlockPos pos = BlockSetter.setBlock(e);
+        BlockPos initialStrikePos = e.getPosition();
+        if (e instanceof BlueLightningBolt) new BlueLightningBolt(e.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), false);
+        else new LightningBoltEntity(e.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), false);
+        e.setPosition(pos.getX(), pos.getY(), pos.getZ());
+        e.world.playSound(null, e.getPosX(), e.getPosY(), e.getPosZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 10.0F, 0.8F + e.world.rand.nextFloat() * 0.2F);
+        e.world.playSound(null, e.getPosX(), e.getPosY(), e.getPosZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + e.world.rand.nextFloat() * 0.2F);
+        BlockSetter.cleanFire(e.getEntityWorld(), initialStrikePos, pos);
+    }
     public static BlockPos setBlock(Entity e){
         int xpos = e.getPosition().getX();
         int zpos = e.getPosition().getZ();
@@ -61,7 +74,7 @@ public class BlockSetter {
             }
         }
     } public static ItemEntity genFireImmuneIS (ItemEntity itemEntity){
-        return new ItemEntity(itemEntity.getEntityWorld(), itemEntity.posX, itemEntity.posY, itemEntity.posZ, itemEntity.getItem()){
+        return new ItemEntity(itemEntity.getEntityWorld(), itemEntity.getPosX(), itemEntity.getPosY(), itemEntity.getPosZ(), itemEntity.getItem()){
             @Override
             public boolean isImmuneToExplosions() {
                 return true;

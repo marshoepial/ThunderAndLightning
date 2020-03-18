@@ -6,9 +6,12 @@ import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederBlock;
 import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
 import com.CCraze.ThunderAndLightning.config.ThunderLightningConfig;
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
+import com.CCraze.ThunderAndLightning.fluid.TempestFluidBlock;
 import com.CCraze.ThunderAndLightning.items.*;
 import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
 import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
+import com.CCraze.ThunderAndLightning.networking.TempestWeatherPacket;
+import com.CCraze.ThunderAndLightning.particles.ParticleTypeRegistry;
 import com.CCraze.ThunderAndLightning.setup.ClientProxy;
 import com.CCraze.ThunderAndLightning.setup.IProxy;
 import com.CCraze.ThunderAndLightning.setup.ModVals;
@@ -23,11 +26,11 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,7 +48,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("thunderandlightning")
@@ -67,12 +69,12 @@ public class ThunderAndLightning {
     private static final ResourceLocation stillTexture = new ResourceLocation("minecraft:block/water_still");
     private static final ResourceLocation flowingTexture  = new ResourceLocation("minecraft:block/water_flow");
 
-    private static RegistryObject<FlowingFluid> TempFluidSource = FLUID_REGISTRY.register("tempestuous_fluid", () ->
+    public static RegistryObject<FlowingFluid> TempFluidSource = FLUID_REGISTRY.register("tempestuous_fluid", () ->
             new ForgeFlowingFluid.Source(ThunderAndLightning.fluidProperties));
     private static RegistryObject<FlowingFluid> TempFluidFlowing = FLUID_REGISTRY.register("tempestuous_fluid_flowing", () ->
             new ForgeFlowingFluid.Flowing(ThunderAndLightning.fluidProperties));
     private static RegistryObject<FlowingFluidBlock> TempFluidBlock = BLOCK_REGISTRY.register("tempestuous_fluid_block", () ->
-            new FlowingFluidBlock(TempFluidSource, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0f).noDrops()));
+            new TempestFluidBlock(TempFluidSource, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0f).noDrops()));
     private static RegistryObject<BucketItem> TempFluidBucket = ITEM_REGISTRY.register("tempestuous_fluid_bucket", () ->
             new BucketItem(TempFluidSource, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ModVals.modGroup)));
 
@@ -83,7 +85,6 @@ public class ThunderAndLightning {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
         eventBus.addListener(this::setup);
-
         BLOCK_REGISTRY.register(eventBus);
         ITEM_REGISTRY.register(eventBus);
         FLUID_REGISTRY.register(eventBus);
@@ -93,8 +94,10 @@ public class ThunderAndLightning {
         new ModVals();
         proxy.init();
         int packetId = 0;
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> { FMLJavaModLoadingContext.get().getModEventBus().register(ClientEventHandler.class); });
-        TAndLPacketHandler.INSTANCE.registerMessage(packetId++, BlueBoltEntityPacket.class, BlueBoltEntityPacket::encode, BlueBoltEntityPacket::decode, BlueBoltEntityPacket::onReceive);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            MinecraftForge.EVENT_BUS.register(ClientEventBusHandler.class); });
+        TAndLPacketHandler.BLUEBOLTHANDLER.registerMessage(packetId++, BlueBoltEntityPacket.class, BlueBoltEntityPacket::encode, BlueBoltEntityPacket::decode, BlueBoltEntityPacket::onReceive);
+        TAndLPacketHandler.TEMPESTWEATHERHANDLER.registerMessage(packetId++, TempestWeatherPacket.class, TempestWeatherPacket::encode, TempestWeatherPacket::decode, TempestWeatherPacket::onReceive);
     }
 
 
@@ -138,7 +141,7 @@ public class ThunderAndLightning {
             Block[] lightingAttractorBlockArray = lightningAttractorBlockList.toArray(new Block[0]);
             event.getRegistry().register(TileEntityType.Builder.create(LightningAttractorTile::new, lightingAttractorBlockArray).build(null)
                     .setRegistryName("lightningattractortile"));
-            event.getRegistry().register(TileEntityType.Builder.create(LightningAttractorTile::new, ModBlocks.SKYSEEDER).build(null)
+            event.getRegistry().register(TileEntityType.Builder.create(SkySeederTile::new, ModBlocks.SKYSEEDER).build(null)
                     .setRegistryName("skyseedertile"));
         }
 
@@ -147,13 +150,11 @@ public class ThunderAndLightning {
             event.getRegistry().register(EntityType.Builder.<BlueLightningBolt>create(EntityClassification.MISC).disableSerialization().size(0, 0).build("bluebolt").setRegistryName(MODID, "bluebolt"));
         }
 
-        /*@SubscribeEvent
-        public static void onModelRegistry(final ModelRegistryEvent event){
-            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_BASE);
-            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_FAN);
-            ModelLoader.addSpecialModel(ModVals.SKYSEEDER_MODEL_HEAD);
+        @SubscribeEvent
+        public static void onParticleRegistry(RegistryEvent.Register<ParticleType<?>> event){
+            System.out.println("Registering particles");
+            ParticleTypeRegistry.registerParticleTypes();
         }
-        */
     }
 }
 

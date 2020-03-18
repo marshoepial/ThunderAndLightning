@@ -1,14 +1,15 @@
 package com.CCraze.ThunderAndLightning.blocks.skyseeder;
 
-import com.CCraze.ThunderAndLightning.setup.ModVals;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.util.Random;
 
@@ -18,86 +19,45 @@ import java.util.Random;
 
 //Not sided because this should be called only on client.
 public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
-    public SkySeederTERenderer() {
-        System.out.println("SkySeeder renderer has been created");
+    public SkySeederTERenderer(TileEntityRendererDispatcher p_i226006_1_) {
+        super(p_i226006_1_);
     }
-    @Override
-    public void render(SkySeederTile te, double x, double y, double z, float partialTicks, int destroyStage) {
-        super.render(te, x, y, z, partialTicks, destroyStage);
-
-        //get the blockstates that have the separate models
-        BlockState headState = te.getBlockState().with(SkySeederBlock.modelProperty, 1);
-        BlockState fanState = te.getBlockState().with(SkySeederBlock.modelProperty, 2);
-        BlockState baseState = te.getBlockState().with(SkySeederBlock.modelProperty, 3);
-
-        //the math that calculates how everything should move on the model
-        double ticks = te.getWorld().getDayTime() + partialTicks;
-        if (te.prevTicks == 0) te.prevTicks = ticks;
-        double tickDiff = ticks - te.prevTicks;
-
-        if (te.fanRPT > te.realFanRPT){
-            double newRPT = te.realFanRPT + (1/te.spoolTicks)*tickDiff;
-            te.realFanRPT = Math.min(te.fanRPT, newRPT);
-        } else if (te.fanRPT < te.realFanRPT){
-            double newRPT = te.realFanRPT - (1/te.spoolTicks)*tickDiff;
-            te.realFanRPT = Math.max(newRPT, te.fanRPT);
-        }
-        //System.out.println(te.realFanRPT + " "+ te.fanRPT);
-
-        if (te.pitch > te.realPitch){
-            te.realPitch = Math.min(te.realPitch + tickDiff * 5, te.pitch);
-        } else if (te.pitch < te.realPitch){
-            te.realPitch = Math.max(te.realPitch - tickDiff * 5, te.pitch);
-        }
-
-        if (te.yaw > te.realYaw){
-            te.realYaw = Math.min(te.realYaw + tickDiff * 5, te.yaw);
-        } else if (te.yaw < te.realYaw){
-            te.realYaw = Math.max(te.realYaw - tickDiff * 5, te.yaw);
-        }
-
-        te.realFanRot = te.realFanRPT*tickDiff + te.realFanRot;
-        if (te.realFanRot >= 360) te.realFanRot = te.realFanRot - 360;
-
-        //actually render things. custom method to cut down on code. the first obj array is for the rotations, the second tells how each model should be offset after rotating
-        renderPart(te, headState, x, y, z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D},{te.realPitch, 1.0D, 0.0D, 0.0D}}, new Double[]{0.5D, 0.5D, 0.5D});
-        renderPart(te, baseState, x, y, z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D}}, new Double[]{0.5D, 0.5D, 0.5D});
-        renderPart(te, fanState, x, y ,z, new Object[][]{{te.realYaw, 0.0D, 1.0D, 0.0D},{te.realPitch, 1.0D, 0.0D, 0.0D},{te.realFanRot, 0.0D, 0.0D, 1.0D}}, new Double[]{0.5D, 0.63D, 0.5D});
-    }
-    public void renderPart(SkySeederTile te, BlockState bs, double x, double y, double z, Object[][] rotations, Double[] offsets){
-        //most of this code is cut-and-paste from other sources. I can't comment on much of it because opengl is foreign to me
-        //this is also pretty much a catch-all for most basic tesr rendering, you can copy this if you want and modify it to what you need :)
+    public void renderPart(BlockState bs, double[] rotations, double[] offsets, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedLightOverlay){
         BlockRendererDispatcher renderer = Minecraft.getInstance().getBlockRendererDispatcher();
 
-        GlStateManager.pushMatrix();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        GlStateManager.disableCull();
-        if (Minecraft.isAmbientOcclusionEnabled()) GlStateManager.shadeModel(7425);
-        else GlStateManager.shadeModel(7424);
-
-        BlockModelRenderer.enableCache();
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
         //first, rotate it to where you want it to rotate around. then rotate it, and then move it to its final location in the world
-        GlStateManager.translated(x + offsets[0], y + offsets[1], z+ offsets[2]);
-        for (Object[] rotation : rotations) {
-            GlStateManager.rotated((double)rotation[0], (double)rotation[1], (double)rotation[2], (double)rotation[3]);
-        }
-        GlStateManager.translated(-te.getPos().getX()-offsets[0], -te.getPos().getY()-offsets[1],
-                -te.getPos().getZ()-offsets[2]);
-        renderer.getBlockModelRenderer().renderModel(getWorld(), renderer.getModelForState(bs), bs, te.getPos(),
-                bufferBuilder, false, new Random(), te.getBlockState().getPositionRandom(te.getPos()));
-        bufferBuilder.setTranslation(0, 0, 0);
-        tessellator.draw();
-        BlockModelRenderer.disableCache();
-        RenderHelper.enableStandardItemLighting();
+        matrixStack.push();
+        matrixStack.translate(offsets[0], offsets[1], offsets[2]);
+        matrixStack.rotate(Vector3f.YP.rotationDegrees((float)rotations[0]));
+        matrixStack.rotate(Vector3f.XP.rotationDegrees((float)rotations[1]));
+        matrixStack.rotate(Vector3f.ZP.rotationDegrees((float)rotations[2]));
+        matrixStack.translate(-offsets[0], -offsets[1], -offsets[2]);
 
-        GlStateManager.popMatrix();
+        renderer.renderBlock(bs, matrixStack, buffer, combinedLightIn, combinedLightOverlay);
+
+        matrixStack.pop();
+    }
+
+    //v = partialTicks, i = combinedLightIn, i1=combinedOverlayIn
+    @Override
+    public void render(SkySeederTile skySeederTile, float v, MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int i, int i1) {
+        //super.render(skySeederTile, v, matrixStack, iRenderTypeBuffer, i, i1);
+        //get the blockstates that have the separate models
+        BlockState headState = skySeederTile.getBlockState().with(SkySeederBlock.modelProperty, 1);
+        BlockState fanState = skySeederTile.getBlockState().with(SkySeederBlock.modelProperty, 2);
+        BlockState baseState = skySeederTile.getBlockState().with(SkySeederBlock.modelProperty, 3);
+        
+        double yaw = skySeederTile.realYaw > skySeederTile.yaw ? Math.max(skySeederTile.realYaw - 5*v, skySeederTile.yaw)
+                : Math.min(skySeederTile.realYaw + 5*v, skySeederTile.yaw);
+        double pitch = skySeederTile.realPitch > skySeederTile.pitch ? Math.max(skySeederTile.realPitch - 5*v, skySeederTile.pitch)
+                : Math.min(skySeederTile.realPitch + 5*v, skySeederTile.pitch);
+        double fanRot = skySeederTile.realFanRot + skySeederTile.realFanRPT*v;
+
+        //System.out.println(skySeederTile.realPitch+", "+skySeederTile.realYaw);
+
+        //actually render things. custom method to cut down on code. the first obj array is for the rotations, the second tells how each model should be offset after rotating
+        renderPart(headState, new double[]{yaw, pitch, 0}, new double[]{0.5D, 0.5D, 0.5D}, matrixStack, iRenderTypeBuffer,i,  i1);
+        renderPart(baseState, new double[]{yaw, 0, 0}, new double[]{0.5D, 0.5D, 0.5D}, matrixStack,iRenderTypeBuffer,i,  i1);
+        renderPart(fanState, new double[]{yaw, pitch, fanRot}, new double[]{0.5D, 0.63D, 0.5D}, matrixStack, iRenderTypeBuffer, i, i1);
     }
 }

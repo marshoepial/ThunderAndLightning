@@ -3,7 +3,6 @@ package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 import com.CCraze.ThunderAndLightning.ServerEventHandler;
 import com.CCraze.ThunderAndLightning.behavior.AttractorEnergyStorage;
 import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
-import com.CCraze.ThunderAndLightning.weather.TempestWeather;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -68,14 +67,6 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                 }
             });
         }
-
-        if (world.getWorldInfo().isThundering()) {
-            if (!TempestWeather.tempestActive && world.isRemote) TempestWeather.beginTempest(world);
-            if (world.isRemote) TempestWeather.ticked(world, world.getChunkAt(getPos()));
-        } else if (TempestWeather.tempestActive) TempestWeather.endTempest();
-        if (world.getTileEntity(pos.up()) instanceof SkySeederTile && ((SkySeederTile) world.getTileEntity(pos.up())).pitch == 0){
-            ((SkySeederTile) world.getTileEntity(pos.up())).activateSeeder();
-        }
     }
 
     public boolean isValid(){
@@ -101,7 +92,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                 //System.out.println("Recipeparser returned item "+newItem+" with maxrepeat "+maxRepeat);
                 if (!newItem.equals(((ItemEntity) entity).getItem().getItem())){
                     if (((ItemEntity) entity).getItem().getCount() > maxRepeat) {
-                        ItemEntity secondEntity = genItemEntity(world, entity.posX, entity.posY, entity.posZ,
+                        ItemEntity secondEntity = genItemEntity(world, entity.getPosX(), entity.getPosY(), entity.getPosZ(),
                                 ((ItemEntity) entity).getItem().copy());
                         secondEntity.getItem().setCount(((ItemEntity) entity).getItem().getCount()-maxRepeat);
                         //System.out.println("Stack amount bigger than maximum repeat, creating second entity with item "+secondEntity.getItem().getItem());
@@ -111,7 +102,7 @@ public class LightningAttractorTile extends TileEntity implements ITickableTileE
                     returnStack.setCount(Math.min(((ItemEntity) entity).getItem().getCount(), maxRepeat));
                     //System.out.println("Returning with item "+returnStack.getItem()+" and count "+returnStack.getCount());
                     entity.remove();
-                    entity = genItemEntity(world, entity.posX, entity.posY, entity.posZ, returnStack);
+                    entity = genItemEntity(world, entity.getPosX(), entity.getPosY(), entity.getPosZ(), returnStack);
                     world.addEntity(entity);
                     //System.out.println("Item now has item "+((ItemEntity) entity).getItem().getItem()+" with count "+((ItemEntity) entity).getItem().getCount());
                     entityMod = true;

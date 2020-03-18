@@ -1,5 +1,6 @@
 package com.CCraze.ThunderAndLightning.blocks;
 
+import com.CCraze.ThunderAndLightning.blocks.boiler.BoilerTileEntity;
 import com.CCraze.ThunderAndLightning.blocks.lightningattractors.*;
 import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederBlock;
 import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
@@ -22,4 +23,6 @@ public class ModBlocks {
     public static TileEntityType<LightningAttractorTile> LIGHTNINGATTRACTOR_TILE;
     @ObjectHolder("thunderandlightning:skyseedertile")
     public static TileEntityType<SkySeederTile> SKYSEEDER_TILE;
+    @ObjectHolder("thunderandlightning:boilertile")
+    public static TileEntityType<BoilerTileEntity> BOILER_TILE;
 }

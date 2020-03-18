@@ -1,7 +1,9 @@
 package com.CCraze.ThunderAndLightning.blocks.lightningattractors;
 
 import com.CCraze.ThunderAndLightning.ThunderAndLightning;
+import com.CCraze.ThunderAndLightning.blocks.skyseeder.SkySeederTile;
 import com.CCraze.ThunderAndLightning.items.LightningAttractorBlockItem;
+import com.CCraze.ThunderAndLightning.weather.TempestWeather;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -9,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -56,14 +59,14 @@ public class LightningAttractorBlock extends Block{
                 (int)Math.round(maxEnergyStorage*modifier), energyCap);
     }
 
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
         if (!world.isRemote && hand.equals(Hand.MAIN_HAND)){
             //System.out.println("lightningAttractorBlock activated on world "+world.toString() + "with hand "+hand.toString());
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof LightningAttractorTile && ((LightningAttractorTile) te).canStoreEnergy()){
                 //System.out.println("On world "+world.toString()+" found lightning attractor tile, sending energy message");
                 player.sendMessage(new StringTextComponent("Current Energy: "+((LightningAttractorTile)te).getEnergy()));
-                return true;
+                return ActionResultType.SUCCESS;
             }
         }
         return super.onBlockActivated(state, world, pos, player, hand, result);

@@ -1,6 +1,7 @@
 package com.CCraze.ThunderAndLightning.networking;
 
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
+import com.CCraze.ThunderAndLightning.weather.TempestWeatherClient;
 import net.minecraft.client.Minecraft;
 
 public class ClientHandling {
@@ -11,5 +12,8 @@ public class ClientHandling {
         bolt.rotationPitch = 0.0F;
         bolt.setEntityId(bbep.entityId);
         Minecraft.getInstance().world.addLightning(bolt);
+    }
+    public static void handleTempestWeatherPacket(TempestWeatherPacket twp){
+        TempestWeatherClient.setTempestActive(twp.starting, twp.transition);
     }
 }
