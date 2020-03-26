@@ -1,0 +1,17 @@
+{
+  "skyseederon": {
+    "category": "block",
+    "subtitle": "thunderandlightning.subtitle.skyseederOn",
+    "sounds": ["thunderandlightning:seederon"]
+  },
+  "skyseederrunning": {
+    "category": "block",
+    "subtitle": "thunderandlightning.subtitle.skyseederRunning",
+    "sounds": ["thunderandlightning:seederrunning"]
+  },
+  "skyseederoff": {
+    "category": "block",
+    "subtitle": "thunderandlightning.subtitle.skyseederOff",
+    "sounds": ["thunderandlightning:seederoff"]
+  }
+}

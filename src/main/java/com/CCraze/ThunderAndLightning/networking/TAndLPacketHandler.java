@@ -19,5 +19,11 @@ public class TAndLPacketHandler{
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
+    public static final SimpleChannel SOUNDPACKETHANDLER = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(ThunderAndLightning.MODID, "soundpackethandler"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals
+    );
 }
 

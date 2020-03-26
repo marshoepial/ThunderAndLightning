@@ -1,17 +1,11 @@
 package com.CCraze.ThunderAndLightning.blocks.skyseeder;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraftforge.client.model.data.EmptyModelData;
-
-import java.util.Random;
 
 //This block is interesting because I have it rendered in parts to make moving each individual part easier
 //The blockstate file for this block is a "multipart". Depending on which "useModel" value you use, the model will be different
@@ -51,13 +45,14 @@ public class SkySeederTERenderer extends TileEntityRenderer<SkySeederTile> {
                 : Math.min(skySeederTile.realYaw + 5*v, skySeederTile.yaw);
         double pitch = skySeederTile.realPitch > skySeederTile.pitch ? Math.max(skySeederTile.realPitch - 5*v, skySeederTile.pitch)
                 : Math.min(skySeederTile.realPitch + 5*v, skySeederTile.pitch);
-        double fanRot = skySeederTile.realFanRot + skySeederTile.realFanRPT*v;
+        skySeederTile.realFanRot += skySeederTile.realFanRPT*v;
+        if (skySeederTile.realFanRot >= 360) skySeederTile.realFanRot -= 360;
 
         //System.out.println(skySeederTile.realPitch+", "+skySeederTile.realYaw);
 
         //actually render things. custom method to cut down on code. the first obj array is for the rotations, the second tells how each model should be offset after rotating
         renderPart(headState, new double[]{yaw, pitch, 0}, new double[]{0.5D, 0.5D, 0.5D}, matrixStack, iRenderTypeBuffer,i,  i1);
         renderPart(baseState, new double[]{yaw, 0, 0}, new double[]{0.5D, 0.5D, 0.5D}, matrixStack,iRenderTypeBuffer,i,  i1);
-        renderPart(fanState, new double[]{yaw, pitch, fanRot}, new double[]{0.5D, 0.63D, 0.5D}, matrixStack, iRenderTypeBuffer, i, i1);
+        renderPart(fanState, new double[]{yaw, pitch, skySeederTile.realFanRot}, new double[]{0.5D, 0.63D, 0.5D}, matrixStack, iRenderTypeBuffer, i, i1);
     }
 }

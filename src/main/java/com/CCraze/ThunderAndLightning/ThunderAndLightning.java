@@ -9,6 +9,7 @@ import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
 import com.CCraze.ThunderAndLightning.fluid.TempestFluidBlock;
 import com.CCraze.ThunderAndLightning.items.*;
 import com.CCraze.ThunderAndLightning.networking.BlueBoltEntityPacket;
+import com.CCraze.ThunderAndLightning.networking.SoundPacket;
 import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
 import com.CCraze.ThunderAndLightning.networking.TempestWeatherPacket;
 import com.CCraze.ThunderAndLightning.particles.ParticleTypeRegistry;
@@ -16,6 +17,7 @@ import com.CCraze.ThunderAndLightning.setup.ClientProxy;
 import com.CCraze.ThunderAndLightning.setup.IProxy;
 import com.CCraze.ThunderAndLightning.setup.ModVals;
 import com.CCraze.ThunderAndLightning.setup.ServerProxy;
+import com.CCraze.ThunderAndLightning.sounds.SoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
@@ -29,6 +31,7 @@ import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -98,6 +101,7 @@ public class ThunderAndLightning {
             MinecraftForge.EVENT_BUS.register(ClientEventBusHandler.class); });
         TAndLPacketHandler.BLUEBOLTHANDLER.registerMessage(packetId++, BlueBoltEntityPacket.class, BlueBoltEntityPacket::encode, BlueBoltEntityPacket::decode, BlueBoltEntityPacket::onReceive);
         TAndLPacketHandler.TEMPESTWEATHERHANDLER.registerMessage(packetId++, TempestWeatherPacket.class, TempestWeatherPacket::encode, TempestWeatherPacket::decode, TempestWeatherPacket::onReceive);
+        TAndLPacketHandler.SOUNDPACKETHANDLER.registerMessage(packetId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::onReceive);
     }
 
 
@@ -152,8 +156,12 @@ public class ThunderAndLightning {
 
         @SubscribeEvent
         public static void onParticleRegistry(RegistryEvent.Register<ParticleType<?>> event){
-            System.out.println("Registering particles");
             ParticleTypeRegistry.registerParticleTypes();
+        }
+
+        @SubscribeEvent
+        public static void onSoundEventRegistry(RegistryEvent.Register<SoundEvent> event){
+            SoundEvents.registerSounds(event);
         }
     }
 }

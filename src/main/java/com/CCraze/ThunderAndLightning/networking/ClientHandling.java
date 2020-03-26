@@ -1,6 +1,7 @@
 package com.CCraze.ThunderAndLightning.networking;
 
 import com.CCraze.ThunderAndLightning.entity.BlueLightningBolt;
+import com.CCraze.ThunderAndLightning.sounds.SoundRegistry;
 import com.CCraze.ThunderAndLightning.weather.TempestWeatherClient;
 import net.minecraft.client.Minecraft;
 
@@ -15,5 +16,8 @@ public class ClientHandling {
     }
     public static void handleTempestWeatherPacket(TempestWeatherPacket twp){
         TempestWeatherClient.setTempestActive(twp.starting, twp.transition);
+    }
+    public static void handleISoundPacket(SoundPacket packet){
+        SoundRegistry.getSound(packet.resourceLocation).get().onClientReceived(packet.pos, packet.volume, packet.pitch);
     }
 }

@@ -1,19 +1,24 @@
 package com.CCraze.ThunderAndLightning.blocks.skyseeder;
 
 import com.CCraze.ThunderAndLightning.blocks.ModBlocks;
+import com.CCraze.ThunderAndLightning.networking.SoundPacket;
+import com.CCraze.ThunderAndLightning.networking.TAndLPacketHandler;
 import com.CCraze.ThunderAndLightning.particles.ParticleRegistry;
+import com.CCraze.ThunderAndLightning.sounds.SoundEvents;
 import com.CCraze.ThunderAndLightning.weather.TempestWeather;
 import com.sun.javafx.geom.Vec2d;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -22,15 +27,18 @@ public class SkySeederTile extends TileEntity implements ITickableTileEntity {
     public double pitch = 0;
     public double yaw = 0;
     public double fanRPT = 0;
-    public boolean fanDown = false;
 
     public double realYaw = 0;
     public double realPitch = 0;
     public double realFanRPT = 0;
-    public double realFanRot = 0;
+    public double realFanRot = 0; //client only - will always be 0 on server, and never updated on server.
 
-    public double spoolTicks = 10;
+    public double spoolTicksUp = SoundEvents.SKYSEEDERONLENGTH;
+    public double spoolTicksDown = SoundEvents.SKYSEEDEROFFLENGTH;
     public double maxFanSpeed = 50;
+
+    private long ticksAtLastSound;
+    private int lastSound = 2; //skySeederOn = 0, skySeederRunning = 1, skySeederOff = 2.
 
     public SkySeederTile() {
         super(ModBlocks.SKYSEEDER_TILE);
@@ -38,31 +46,30 @@ public class SkySeederTile extends TileEntity implements ITickableTileEntity {
 
     @Override
     public void tick() {
+        boolean valsChanged = false;
         if (yaw > realYaw){
-            realYaw = Math.min(realYaw + 5, yaw);
+            realYaw = Math.min(realYaw + 5, yaw); valsChanged = true;
         } else if (yaw < realYaw){
-            realYaw = Math.max(realYaw - 5, yaw);
+            realYaw = Math.max(realYaw - 5, yaw); valsChanged = true;
         }
 
         if (pitch > realPitch){
-            realPitch = Math.min(realPitch + 5, pitch);
+            realPitch = Math.min(realPitch + 5, pitch); valsChanged = true;
         } else if (pitch < realPitch){
-            realPitch = Math.max(realPitch - 5, pitch);
+            realPitch = Math.max(realPitch - 5, pitch); valsChanged = true;
         }
-
-        realFanRot += realFanRPT ;
-        if (realFanRot >= 360) realFanRot =- 360;
 
         if (fanRPT > realFanRPT){
-            double newRPT = realFanRPT + (1/spoolTicks);
-            realFanRPT = Math.min(fanRPT, newRPT);
+            double newRPT = realFanRPT + (1/spoolTicksUp)*fanRPT;
+            realFanRPT = Math.min(fanRPT, newRPT); valsChanged = true;
         } else if (fanRPT < realFanRPT) {
-            double newRPT = realFanRPT - (1 / spoolTicks);
-            realFanRPT = Math.max(newRPT, fanRPT);
+            double newRPT = realFanRPT - (1 / spoolTicksDown)*fanRPT;
+            realFanRPT = Math.max(newRPT, fanRPT); valsChanged = true;
         }
-
-        world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 2);
-        markDirty();
+        if (valsChanged) {
+            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 2);
+            markDirty();
+        }
 
         /*if (!world.isRemote){
             if (getBlockInRaytrace(world, new Vec3d(pos.getX() + 0.5, pos.getY()+0.63, pos.getZ()+0.5),
@@ -84,6 +91,20 @@ public class SkySeederTile extends TileEntity implements ITickableTileEntity {
                 TempestWeather.tick(world, world.getChunkAt(pos), this);
             }
         }
+        if (realFanRPT > 0 && lastSound == 2){
+            lastSound = 0;
+            ticksAtLastSound = world.getGameTime();
+            world.playSound(null, pos, SoundEvents.SKYSEEDERON, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        } else if (lastSound == 0 && world.getGameTime() - ticksAtLastSound >= SoundEvents.SKYSEEDERONLENGTH && !(fanRPT < realFanRPT)) {
+            lastSound = 1;
+            if (!world.isRemote) TAndLPacketHandler.SOUNDPACKETHANDLER.send(PacketDistributor.NEAR.with(() ->
+                    new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), 200, world.getDimension().getType())),
+                    new SoundPacket(new ResourceLocation("thunderandlightning:skyseederrunning"), pos, 1.0, 1.0));
+        } else if (fanRPT < realFanRPT){
+            ticksAtLastSound = world.getGameTime();
+            lastSound = 2;
+            world.playSound(null, pos, SoundEvents.SKYSEEDEROFF, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
     } public static BlockState getBlockInRaytrace (World world, Vec3d vecPoint, Vec2d vecAngle, double lengthToCheck, boolean checkAtVecPoint){
         //x, y, z to step between checks
         double[] testInterval  = new double[]{Math.cos(Math.toRadians(vecAngle.y))*Math.sin(Math.toRadians(vecAngle.x)),
@@ -95,13 +116,28 @@ public class SkySeederTile extends TileEntity implements ITickableTileEntity {
         }
         return null;
     }
-
     public void activateSeeder(){
         Random random = new Random();
-        pitch = (random.nextDouble()-0.5)*20;
-        yaw = random.nextDouble()*360;
-        fanRPT = maxFanSpeed;
-        markDirty();
+        boolean isValid = false;
+        int iters = 0;
+        while (!isValid) {
+            pitch = (random.nextDouble() - 0.5) * 20;
+            yaw = random.nextDouble() * 360;
+            if (getBlockInRaytrace(world, new Vec3d(pos.getX() + 0.5 + 0.3 * Math.cos(Math.toRadians(realPitch)) * Math.sin(Math.toRadians(realYaw)),
+                            pos.getY() + 0.63 + 0.3 * Math.sin(Math.toRadians(-realPitch)),
+                            pos.getZ() + 0.5 + 0.3 * Math.cos(Math.toRadians(realPitch)) * Math.cos(Math.toRadians(realYaw))),
+                    new Vec2d(yaw, pitch), 5, false) == null){
+                isValid = true;
+                fanRPT = maxFanSpeed;
+                markDirty();
+            }
+            else{
+                if (iters > 10) {
+                    yaw = 0; pitch = 0; break;
+                }
+                iters++;
+            }
+        }
     }
     @Override
     public CompoundNBT write(CompoundNBT compound) {

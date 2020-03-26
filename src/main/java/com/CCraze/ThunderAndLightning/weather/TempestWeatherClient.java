@@ -103,7 +103,7 @@ public class TempestWeatherClient {
             double tickDiff = totalTicks - ticksAtUpdateBrightness;
 
             double selectedOffset;
-            if (colorsChanged) selectedOffset = MathHelper.clamp(-0.5*Math.sin(Math.toRadians(world.getCelestialAngle(partialTicks))) + 1, 0, 1);
+            if (colorsChanged) selectedOffset = 0.5;
             else selectedOffset = 1.0;
 
             if (currBrightnessOffset < selectedOffset) currBrightnessOffset = Math.min(selectedOffset, currBrightnessOffset + tickDiff / 40);
@@ -114,7 +114,7 @@ public class TempestWeatherClient {
             return currBrightnessOffset;
         }
         if (!colorsChanged) return 1;
-        else return MathHelper.clamp(-0.5*Math.sin(Math.toRadians(world.getCelestialAngle(partialTicks))) + 1, 0, 1);
+        else return 0.7;
     }
 
     public static void setTempestActive(boolean setTempest, boolean transition) {

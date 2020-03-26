@@ -1,5 +1,6 @@
 package com.CCraze.ThunderAndLightning.mixin;
 
+import com.CCraze.ThunderAndLightning.weather.TempestWeatherClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
@@ -10,29 +11,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientWorld.class)
 public class SkyBrightnessMixin {
-    private float partialTicks;
-
-    /*@Inject(method = "getSunBrightness", at = @At(value = "HEAD"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void getPartialTicks(float partialTicks, CallbackInfoReturnable<Float> cir){
-        this.partialTicks = partialTicks;
-    }*/
-    @ModifyVariable(method = "getSunBrightness", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getThunderStrength(F)F"), index = 3)
-    private float modifySunBrightness(float brightness){
-        //return brightness*(float)TempestWeatherClient.getBrightnessOffset(partialTicks);
-        System.out.println(brightness);
-        return 0;
+    @Inject(method = "getSunBrightness", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    private void modifySunBrightness(float partialTicks, CallbackInfoReturnable<Float> cir, float f, float f1){ //f1 is the brightness that is returning
+        cir.setReturnValue((float) (TempestWeatherClient.getBrightnessOffset(partialTicks)*f1));
     }
-    @ModifyVariable(method = "getSunBrightness", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getThunderStrength(F)F", shift = At.Shift.AFTER), ordinal = 2)
-    private float getSunBrightness(float brightness){
-        //return brightness*(float)TempestWeatherClient.getBrightnessOffset(partialTicks);
-        System.out.println(brightness);
-        return brightness;
-    }
-    /*@Inject(method = "getLightFor", at = @At(value = "HEAD"))
-    private void changeLightLevel(LightType lightTypeIn, BlockPos blockPosIn, CallbackInfoReturnable<Integer> cir){
-        cir.setReturnValue(0);
-    }*/
 }

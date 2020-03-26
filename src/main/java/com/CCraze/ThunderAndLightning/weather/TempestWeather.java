@@ -24,31 +24,34 @@ public class TempestWeather{
     private static long prevTick;
 
     private static final Random rand = new Random();
-    private static long ticksSinceWorldLoad;
+    private static long ticksSinceWorldLoad; //TODO: create equivalent for dedicated servers
 
     //DO NOT TRY TO UNBOX NON-PRIMITIVE BOOLEANS
 
-    private static BiMap<Chunk, SkySeederTile> isActiveInChunk = HashBiMap.create();
-    private static Map<Chunk, Boolean> isChunkColored = new HashMap<>();
-    private static Map<PlayerEntity, Boolean> isInColoredChunk = new HashMap<>();
-    private static Map<SkySeederTile, Long> tickNums = new HashMap<>();
+    private static BiMap<Chunk, SkySeederTile> isActiveInChunk = HashBiMap.create(); // is the tempest active here?
+    private static Map<Chunk, Boolean> isChunkColored = new HashMap<>(); //is this chunk colored? (different from prev. map because tempests color chunks in a 3x3 radius)
+    private static Map<PlayerEntity, Boolean> isInColoredChunk = new HashMap<>(); //tracks clients' awareness of color change.
+    private static Map<SkySeederTile, Long> tickNums = new HashMap<>(); //used to make sure seeders are still active
 
+    //REMEMBER: this will call more than once per tick! to get accurate tick count, check for world == null first.
     public static void tick (World world, Chunk chunk, SkySeederTile tile){
         //System.out.println("Ticked!");
-        checkPlayerLoc(world);
+        if (chunk == null) ticksSinceWorldLoad++;
         long ticks = world.getGameTime();
-        ticksSinceWorldLoad++;
-        if (ticks > prevTick){
-            List<SkySeederTile> removeList = new ArrayList<>();
+        if (ticks > prevTick){ //new tick - should check that all tiles are active
+            List<SkySeederTile> removeList = new ArrayList<>(); //can't concurrently modify tickNums
             tickNums.forEach((skySeederTile, heldTicks) -> {
+                //makes sure all tiles updated during last tick
                 if (heldTicks < prevTick) {
-                    Chunk removeChunk = isActiveInChunk.inverse().remove(skySeederTile);
+                    Chunk removeChunk = isActiveInChunk.inverse().remove(skySeederTile); //remove non-active tile, then update tempest status
                     handleTileUpdates(removeChunk, world);
                     removeList.add(skySeederTile);
                 }
             });
             for (SkySeederTile removeTile : removeList) tickNums.remove(removeTile);
             prevTick = ticks;
+
+            checkPlayerLoc(world); //calling this more than once per tick is unnecessary and causes perf. issues
         }
         if (tile != null && chunk != null) {
             tickNums.put(tile, ticks);
@@ -72,7 +75,7 @@ public class TempestWeather{
                 new BlueBoltEntityPacket(blueBolt.getEntityId(), blueBolt.getPosX(), blueBolt.getPosY(), blueBolt.getPosZ()));
     }
     private static void handleTileUpdates(Chunk chunk, World world){
-        if (chunk == null) return; //we crash if we remove the block via command, this makes sure everything's still there
+        //if (chunk == null) return; //we crash if we remove the block via command, this makes sure everything's still there
         boolean[][] isColorChanged = new boolean[5][5];
         BlockPos centralPos = new BlockPos(chunk.getPos().getXStart(), 1, chunk.getPos().getZStart());
         for (int i = -2; i <= 2; i++){
@@ -94,21 +97,21 @@ public class TempestWeather{
     } private static void checkPlayerLoc(World world){
         List<? extends PlayerEntity> players = world.getPlayers();
         for (PlayerEntity player : players) {
-            if (safelyCheckBool(isChunkColored.get(world.getChunkAt(player.getPosition())), true, false)
-                    && safelyCheckBool(isInColoredChunk.get(player), false, true) && player instanceof ServerPlayerEntity){
-                TAndLPacketHandler.TEMPESTWEATHERHANDLER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-                        new TempestWeatherPacket(true, ticksSinceWorldLoad > 50));
+            if (safelyCheckBool(isChunkColored.get(world.getChunkAt(player.getPosition())), true, false) //is the player in a chunk where the sky is colored?
+                    && safelyCheckBool(isInColoredChunk.get(player), false, true) && player instanceof ServerPlayerEntity){  //is the player client not aware of this change?
+                TAndLPacketHandler.TEMPESTWEATHERHANDLER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), //update client
+                        new TempestWeatherPacket(true, ticksSinceWorldLoad > 50)); //if the ticksSinceWorldLoad is less than 50, we'll assume they just loaded and should not transition
                 isInColoredChunk.put(player, true);
-            } else if (safelyCheckBool(isChunkColored.get(world.getChunkAt(player.getPosition())), false, true)
+            } else if (safelyCheckBool(isChunkColored.get(world.getChunkAt(player.getPosition())), false, true) //inverse
                     && safelyCheckBool(isInColoredChunk.get(player), true, false) && player instanceof ServerPlayerEntity){
                 TAndLPacketHandler.TEMPESTWEATHERHANDLER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-                        new TempestWeatherPacket(false, ticksSinceWorldLoad > 50));
+                        new TempestWeatherPacket(false, true));
                 isInColoredChunk.put(player, false);
             }
         }
     }
     public static void tempestServerOnLoad(){
-        isActiveInChunk.clear();
+        isActiveInChunk.clear(); //reset everything on world load
         tickNums.clear();
         prevTick = 0;
         ticksSinceWorldLoad = 0;
@@ -116,7 +119,7 @@ public class TempestWeather{
     public static boolean isTempestActive(Chunk chunk){
         return isActiveInChunk.get(chunk) != null;
     }
-    private static boolean safelyCheckBool(Boolean bool, boolean checkVal, boolean includeNull) {
+    private static boolean safelyCheckBool(Boolean bool, boolean checkVal, boolean includeNull) { //prevents unboxing of booleans and NullPointerExceptions
         if (checkVal){
             if (includeNull) return bool == null || bool;
             else return bool != null && bool;
